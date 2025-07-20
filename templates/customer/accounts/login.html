@@ -1,0 +1,71 @@
+{% extends 'customer/base.html' %}
+{% block content %}
+
+
+<!-- PAGE-CONTENT START -->
+<section class="page-content">
+    <!-- PAGE-BANNER START -->
+    <div class="page-banner-area  margin-bottom-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="page-banner-menu">
+                        <h2 class="page-banner-title">Login</h2>
+                        <ul>
+                            <li><a href="index.html">home</a></li>
+                            <li>Login</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- PAGE-BANNER END -->
+
+    <div class="lognin-area">
+        <div class="container">
+            <div class="row">
+                <!-- Registered-Customers Start -->
+                <div class="col-md-12">
+                    <form action="{% url 'customer_login' %}" method="post">
+                        {% csrf_token %}
+                        <div class="registered-customers">
+                            <h2 class="login-title">REGISTERED CUSTOMERS</h2>
+
+                            <div class="registered">
+                                {% if form.non_field_errors %}
+                                <div class="alert alert-danger">
+                                    {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                <p>If you have an account with us, Please log in.</p>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input type="text" class="custom-form" name="email" placeholder="Enter Email" />
+                                        {{ form.username.errors }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input type="password" class="custom-form" name="password"
+                                            placeholder="Password" />
+                                    </div>
+                                </div>
+                                <p><label class="forgot"><a href="#">Forgot your password?</a></label></p>
+                                <input type="submit" class="custom-submit-2" value="login" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BRAND-LOGO-AREA END -->
+</section>
+
+
+
+{% endblock content %}

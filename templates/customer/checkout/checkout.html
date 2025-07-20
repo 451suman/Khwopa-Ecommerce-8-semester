@@ -1,0 +1,46 @@
+{% extends "customer/base.html" %}
+{% block content %}
+
+
+<section class="page-content">
+    <!-- PAGE-BANNER START -->
+    <div class="page-banner-area photo-4 margin-bottom-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="page-banner-menu">
+                        <h2 class="page-banner-title">Checkout</h2>
+                        <ul>
+                            <li><a href="index.html">home</a></li>
+                            <li>Checkout</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- PAGE-BANNER END -->
+    <!-- CHECKOUT-AREA START -->
+    <div class="checkout-area margin-bottom-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="title-6 margin-bottom-50">Checkout</h3>
+                </div>
+                {% include 'customer/checkout/left/left.html' %}
+                {% include 'customer/checkout/right/right.html' %}
+            </div>
+            <!-- Checkout-Billing-details and order start -->
+            <div class="checkout-bill-order">
+                <form action="#">
+
+
+                </form>
+            </div>
+            <!-- Checkout-Billing-details and order end -->
+        </div>
+    </div>
+    <!-- CHECKOUT-AREA END -->
+
+</section>
+{% endblock content %}

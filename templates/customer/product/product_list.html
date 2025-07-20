@@ -1,0 +1,74 @@
+{% extends "customer/base.html" %}
+{% load static %}
+{% block content %}
+<!-- PAGE-CONTENT START -->
+<section class="page-content">
+    <!-- PAGE-BANNER START -->
+    {% include "customer/product/top/banner.html" %}
+    <!-- PAGE-BANNER END -->
+    <!-- SHOP-AREA START -->
+    <div class="shop-area margin-bottom-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <span class="shop-border"></span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    <!-- widget-categories start -->
+                    {% include "customer/product/left/categories.html" %}
+                    <!-- widget-categories end -->
+                    <!-- shop-filter start -->
+                    {% include "customer/product/left/price_filter.html" %}
+                    <!-- shop-filter end -->
+                    <!-- widget-color start -->
+                    {% include "customer/product/left/vendor.html" %}
+                    <!-- widget-color end -->
+                    <!-- widget-brand start -->
+                    {% include "customer/product/left/brand.html" %}
+                    <!-- widget-brand end -->
+                    <!-- widget-top-brand start -->
+                    {% include "customer/product/left/brand.html" %}
+                    <!-- widget-top-brand end -->
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <!-- Shop-Content start -->
+                    <div class="shop-content">
+                        <!-- product-toolbar start -->
+                        <div class="product-toolbar">
+
+                            <div class="short-by hidden-xs">
+                                <span>short by</span>
+                                <select class="shop-select">
+                                    <option value="1">default</option>
+                                    <option value="1">default</option>
+                                    <option value="1">default</option>
+                                    <option value="1">default</option>
+                                    <option value="1">default</option>
+                                </select>
+                            </div>
+
+
+                        </div>
+                        <!-- product-toolbar end -->
+                        <!-- Shop-product start -->
+                        {% include "customer/product/right/productlist.html" %}
+                        <!-- Shop-product end -->
+                        <!-- product-toolbar start -->
+                        <div class="product-toolbar btm-border">
+
+                            <!-- Pagination -->
+                            {% include "customer/product/right/pagination.html" %}
+                        </div>
+                        <!-- product-toolbar end -->
+                    </div>
+                    <!-- Shop-Content end -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- SHOP-AREA END -->
+
+
+</section>
+<!-- PAGE-CONTENT END -->
+{% endblock content %}

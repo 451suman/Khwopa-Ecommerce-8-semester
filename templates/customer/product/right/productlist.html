@@ -1,0 +1,47 @@
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="grid-view">
+        <div class="row shop-grid">
+            {% for product in products %}
+            <!-- Single-product start -->
+            <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                <div class="single-product">
+                    <div class="product-photo">
+                        <a href="{% url 'product_detail' slug=product.slug %}">
+                            {% with product.product_images.all|first as first_image %}
+                            {% if first_image %}
+                            <img class="primary-photo" src="{{ first_image.image.url }}" alt="{{ product.name }}">
+                            {% else %}
+                            <img class="primary-photo" src="/static/img/default-product.jpg" alt="No image available">
+                            {% endif %}
+                            {% endwith %}
+
+                            {% if product.product_images.all|length > 1 %}
+                            {% with product.product_images.all.1 as second_image %}
+                            <img class="secondary-photo" src="{{ second_image.image.url }}" alt="{{ product.name }}">
+                            {% endwith %}
+                            {% endif %}
+                        </a>
+
+                        <div class="pro-action">
+                            <a href="{% url 'add_to_cart' product.pk %}" class="action-btn">
+                                <i class="sp-shopping-cart"></i><span>Add to cart</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="product-brief">
+                        <h2>
+                            <a href="{% url 'product_detail' slug=product.slug %}">{{ product.name }}</a>
+                        </h2>
+                        <h3>Rs. {{ product.current_price }}</h3>
+                    </div>
+                </div>
+            </div>
+            <!-- Single-product end -->
+
+            {% if forloop.counter|divisibleby:3 %}
+            <div class="clearfix"></div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>

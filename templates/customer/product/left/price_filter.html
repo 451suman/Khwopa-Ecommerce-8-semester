@@ -1,0 +1,46 @@
+<aside class="widget shop-filter">
+    <h3 class="sidebar-title">Price</h3>
+    <form method="get" action="{% url 'price-filter' %}">
+        <div class="info_widget">
+            <div id="slider-range"></div>
+            <div id="amount" style="margin-top: 10px; display: flex; justify-content: space-between;">
+                <span id="min-price-display">Min: Rs 0</span>
+                <span id="max-price-display">Max: Rs 1000</span>
+            </div>
+            <div style="margin-top: 10px;">
+                <input type="text" name="min" class="first_price" placeholder="Min price" />
+                <input type="text" name="max" class="last_price" placeholder="Max price" />
+            </div>
+            <button type="submit" class="shop-now" style="margin-top: 10px;">Filter</button>
+        </div>
+    </form>
+</aside>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+<script>
+    $(function () {
+        $("#slider-range").slider({
+            range: true,
+            min: 0,
+            max: 1000,  // adjust max as needed
+            values: [100, 500],  // initial values
+            slide: function (event, ui) {
+                $(".first_price").val(ui.values[0]);
+                $(".last_price").val(ui.values[1]);
+                $("#min-price-display").text("Min: Rs " + ui.values[0]);
+                $("#max-price-display").text("Max: Rs " + ui.values[1]);
+            }
+        });
+
+        // Initialize input values and displays on page load
+        var minVal = $("#slider-range").slider("values", 0);
+        var maxVal = $("#slider-range").slider("values", 1);
+        $(".first_price").val(minVal);
+        $(".last_price").val(maxVal);
+        $("#min-price-display").text("Min: Rs " + minVal);
+        $("#max-price-display").text("Max: Rs " + maxVal);
+    });
+</script>

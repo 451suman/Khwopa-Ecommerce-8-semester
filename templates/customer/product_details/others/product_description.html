@@ -1,0 +1,37 @@
+<div class="discription-reviews-tab">
+    <!-- Nav tabs -->
+    <ul class="reviews-tab-menu" role="tablist">
+        <li role="presentation" class="active"><a href="#description" data-toggle="tab">Description</a></li>
+        <li role="presentation"><a href="#reviews" data-toggle="tab">Reviews</a></li>
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="description">
+            <div class="single-pro-product-description">
+                <h2 class="title-4">Product Description</h2>
+                <p>{{ product.description}} </p>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="reviews">
+            <div class="product-page-comments">
+                <h2>1 review for Integer consequat ante lectus</h2>
+                <ul>
+                    <li>
+                        <div class="product-comments">
+                        </div>
+                    </li>
+                </ul>
+                <div role="tabpanel" class="tab-pane" id="reviews">
+                    <div class="product-page-comments">
+                        {% include 'customer/product_details/others/product_review.html' %}
+
+                        {% include 'customer/product_details/others/reveiw_forms.html' %}
+                        
+
+                  </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

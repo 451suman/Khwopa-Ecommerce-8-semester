@@ -1,0 +1,8 @@
+<aside class="widget widget-brand">
+    <h5 class="sidebar-title">Brand</h5>
+    <ul>
+        {% for brand in brands %}
+        <li><input type="checkbox" /><a href="{% url 'brand_product_list' brand.id %}">{{ brand.name }}</a></li>
+        {% endfor %}
+    </ul>
+</aside>

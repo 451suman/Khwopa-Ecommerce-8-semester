@@ -1,0 +1,59 @@
+<div class="new-collection-area fix style-2 margin-bottom-80">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="section-title-2 bordr-rights">
+                    <h2 class="border-left-rights " style="padding-top: 10px !important;">Top Rated Collection</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="new-collection active-new-collection-2">
+        {% for product in top_rated %}
+        <div class="single-product new-colect">
+            <div class="product-photo">
+                <a href="{% url 'product_detail' slug=product.slug %}">
+                    {% if product.product_images.all %}
+                    {% with product.product_images.all|first as first_image %}
+                    <img class="primary-photo" style="width: 500px !important; height: 300px !important;"
+                        src="{{ first_image.image.url }}" alt="{{ product.name }}" />
+                    {% endwith %}
+                    {% if product.product_images.all|length > 1 %}
+                    {% with product.product_images.all.1 as second_image %}
+                    <img class="secondary-photo" style="width: 500px !important; height: 300px !important;"
+                        src="{{ second_image.image.url }}" alt="{{ product.name }}" />
+                    {% endwith %}
+                    {% endif %}
+                    {% else %}
+                    <img class="primary-photo" src="" alt="No image available" />
+                    {% endif %}
+                </a>
+                <div class="pro-action">
+                    <!-- <a href="#" class="action-btn"><i class="sp-heart"></i><span>Wishlist</span></a> -->
+                    <a href="{% url 'add_to_cart' product.pk %}" class="action-btn"><i
+                            class="sp-shopping-cart"></i><span>Add to cart</span></a>
+                    <!-- <a href="#" class="action-btn"><i class="sp-compare-alt"></i><span>Compare</span></a> -->
+                </div>
+            </div>
+            <div class="product-brief">
+                <div class="pro-rating">
+                    {% for i in "12345" %}
+                    {% if forloop.counter <= product.average_rating %} ⭐ {% else %} <i class="sp-star rating-2"></i></a>
+
+                        {% endif %}
+                        {% endfor %}
+
+
+
+                        <!-- <a href="#"><i class="sp-star rating-1"></i></a> -->
+                        <!-- <a href="#"><i class="sp-star rating-1"></i></a> -->
+                        <!-- <a href="#"><i class="sp-star rating-2"></i></a> -->
+                </div>
+                <h2><a href="{% url 'product_detail' slug=product.slug %}">{{product.name}}</a></h2>
+                <h3>${{product.current_price}}</h3>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>

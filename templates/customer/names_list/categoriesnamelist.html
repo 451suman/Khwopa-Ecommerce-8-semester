@@ -1,0 +1,24 @@
+{% extends 'customer/base.html' %}
+{% block content %}
+
+{% include 'customer/product/top/banner.html' %}
+
+<h2 class="text-center mb-4 fw-bold">✨ list of {{ title }}</h2>
+
+
+{% if names %}
+<div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+    {% for name in names %}
+    {% if request.path == '/products/categoris/' %}
+    <a href="{% url 'category_product_list' name.slug %}"
+        style="padding: 0.5rem 1rem; background: #eee; border-radius: 6px; text-decoration: none; color: #333;">
+        {{ name }}
+    </a>
+    {% endif %}
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-center text-muted">Empty List</p>
+{% endif %}
+
+{% endblock %}

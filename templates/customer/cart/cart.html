@@ -1,0 +1,109 @@
+{% extends 'customer/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="page-content">
+    <!-- PAGE-BANNER START -->
+    <div class="page-banner-area photo-3 margin-bottom-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="page-banner-menu">
+                        <h2 class="page-banner-title">Wishlist</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- PAGE-BANNER END -->
+
+    <!-- WISHLIST-AREA START -->
+    <div class="shopping-cart-area wishlist-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <form action="#">
+                        <div class="table-content wishlist-table table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="product-remove">SN</th>
+                                        <th class="product-thumbnail">Image</th>
+                                        <th class="product-name">Name</th>
+                                        <th class="product-edit">Rate</th>
+                                        <th class="product-quantity">Quantity</th>
+                                        <th class="product-price">Subtotal</th>
+                                        <th class="product-add-to-cart">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if cart %}
+                                    {% for cp in cart.cartproduct_set.all %}
+                                    <tr>
+                                        <td class="product-remove">{{ forloop.counter }}</td>
+
+                                        <!-- Product image -->
+                                        <td class="product-thumbnail">
+                                            {% with cp.product.product_images.first as first_image %}
+                                            {% if first_image %}
+                                            <img src="{{ first_image.image.url }}" alt="{{ cp.product.name }}" />
+                                            {% else %}
+                                            <img src="{% static 'img/default-product.png' %}" alt="No Image" />
+                                            {% endif %}
+                                            {% endwith %}
+                                        </td>
+
+                                        <!-- Product name -->
+                                        <td class="product-name">
+                                            <a href="{% url 'product_detail' slug=cp.product.slug %}">
+                                                {{ cp.product.name }}
+                                            </a>
+                                        </td>
+
+                                        <td class="product-edit"><a href="#">{{ cp.rate }}</a></td>
+                                        <td class="product-price"><span class="amount">{{ cp.quantity }}</span></td>
+                                        <td class="product-price"><span class="amount">Rs.{{ cp.subtotal }}</span></td>
+                                        <td class="product-add-to-cart-buttons">
+                                            <a href="{% url 'managecart' cp.id %}?action=inc"">+</a>
+                                            <a href=" {% url 'managecart' cp.id %}?action=dcr">-</a>
+                                            <a href="{% url 'managecart' cp.id %}?action=rmv">x</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="">x</td>
+                                        <td colspan="6" class="text-center text-danger">
+                                            <h5>Cart is Empty</h5>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+
+                    <!-- Clear Cart Button -->
+                    <div class="cart-clear-button text-right" style="margin-top: 20px;">
+
+                        <button class="btn btn-danger"><a href="{% url 'empty-cart' %}">Clear Cart</a></button>
+                    </div>
+
+                    <!-- Grand Total and Checkout -->
+                    {% if cart.total %}
+                    <div class="row" style="margin-top: 30px;">
+                        <div class="col-lg-4 col-md-12 offset-lg-8">
+                            <div class="grand-totall text-right">
+                                <h4>Grand Total <span>Rs. {{ cart.total }}</span></h4>
+                                <a href="{% url 'checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- WISHLIST-AREA END -->
+</section>
+{% endblock %}

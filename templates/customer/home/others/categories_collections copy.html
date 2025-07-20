@@ -1,0 +1,77 @@
+<div class="best-sell-area fix style-2">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12">
+                <div class="section-title-2">
+                    <h2 class="border-left-rights">Collection</h2>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-7 col-sm-6 col-xs-12">
+                <ul role="tablist" class="best-sell-menu">
+                    {% for category in categories %}
+                    <li role="presentation" class="{% if forloop.first %}active{% endif %}">
+                        <a href="#{{ category.slug }}" role="tab" data-toggle="tab">{{ category.name }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tab-content best-sell-product">
+                    {% for category in categories %}
+                    <div role="tabpanel" class="tab-pane fade {% if forloop.first %}in active{% endif %}"
+                        id="{{ category.slug }}">
+                        <div class="row">
+                            <div class="active-best-sell navigation-top-right">
+                                <div class="col-md-12">
+
+                                    {% for product in category.products.all %}
+
+                                    <div class="single-product">
+                                        <div class="product-photo">
+                                            <a href="#">
+                                                {% with product.product_images.all|first as first_image %}
+                                                {% if first_image %}
+                                                <img class="primary-photo" src="{{ first_image.image.url }}"
+                                                    alt="{{ product.name }}" />
+                                                {% else %}
+                                                <img class="primary-photo" src="" alt="No image available" />
+                                                {% endif %}
+                                                {% endwith %}
+                                            </a>
+                                            <div class="pro-action">
+                                                <a href="#" class="action-btn"><i
+                                                        class="sp-heart"></i><span>Wishlist</span></a>
+                                                <a href="#" class="action-btn"><i class="sp-shopping-cart"></i><span>Add
+                                                        to cart</span></a>
+                                                <a href="#" class="action-btn"><i
+                                                        class="sp-compare-alt"></i><span>Compare</span></a>
+                                            </div>
+                                        </div>
+                                        <div class="product-brief">
+                                            <h2><a href="#">{{ product.name }}</a></h2>
+                                            <div class="product-brief-inner">
+                                                <h3>${{ product.current_price|default:"0.00" }}</h3>
+                                                <div class="pro-rating">
+                                                    <a href="#"><i class="sp-star rating-1"></i></a>
+                                                    <a href="#"><i class="sp-star rating-1"></i></a>
+                                                    <a href="#"><i class="sp-star rating-1"></i></a>
+                                                    <a href="#"><i class="sp-star rating-1"></i></a>
+                                                    <a href="#"><i class="sp-star rating-2"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

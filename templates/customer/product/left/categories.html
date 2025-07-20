@@ -1,0 +1,17 @@
+<aside class="widget widget-categories">
+    <ul class="list-unstyled">
+        <li class="text-center mb-3">
+            <a href="{% url 'categoris_name_list' %}">Categories</a>
+        </li>
+
+        {% for category in categories %}
+        <li>
+            <a href="{% url 'category_product_list' category.slug %}">{{ category.name }}</a>
+        </li>
+        {% endfor %}
+
+        <li style="background-color: beige;">
+            <a href="{% url 'categoris_name_list' %}">View All</a>
+        </li>
+    </ul>
+</aside>

@@ -1,0 +1,83 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="checkout-bill">
+            <h3 class="title-7 mb-4">Billing Details</h3>
+        </div>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="row mb-3">{}
+                <div class="col-md-6">
+                    <label for="username-email" class="form-label">
+                        Username or Email <span class="required">*</span>
+                    </label>
+                    <input type="text" id="username-email" name="ordered_by" class="form-control"
+                        value="{{ user.full_name }}" required readonly="readonly" />
+                    {{ form.ordered_by.errors }}
+
+                </div>
+                <div class="col-md-6">
+                    <label for="mobile" class="form-label">
+                        Mobile <span class="required">*</span>
+                    </label>
+                    <input type="tel" name="mobile" id="mobile" class="form-control" value="{{user.phone}}" required
+                        readonly="readonly">
+                    {{ form.phone.errors }}
+
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <label for="email-address" class="form-label">Email Address</label>
+                    <input type="email" name="email" id="email" class="form-control" value="{{user.email}}"
+                        readonly="readonly" required>
+                    {{ form.email.errors }}
+                </div>
+            </div>
+
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="ship-different-address" checked />
+                <label class="form-check-label" for="ship-different-address">
+                    Ship to a same address
+                </label>
+            </div>
+
+            <div id="shipping-address-fields">
+                <div class="row mb-3">
+
+                    <div class="col-md-6">
+                        <label for="address" class="form-label">
+                            Address <span class="required">*</span>
+                        </label>
+                        <input type="text" id="address" class="form-control" name="shipping_address" />
+                        {{ form.shipping_address.errors }}
+
+                    </div>
+                </div>
+            </div>
+            <div class="order-button-payment">
+                <input type="submit" value="Place order" />
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkbox = document.getElementById('ship-different-address');
+        const addressInput = document.getElementById('address');
+
+        function updateAddressFields() {
+            if (checkbox.checked) {
+                addressInput.value = "{{ user.address|default:''|escapejs }}";
+            } else {
+                addressInput.value = "";
+            }
+        }
+
+        // Run on page load
+        updateAddressFields();
+
+        // Run on checkbox change
+        checkbox.addEventListener('change', updateAddressFields);
+    });
+</script>

@@ -1,0 +1,82 @@
+# 🐍 Python & Virtual Environment
+venv/
+.venv/
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.swp
+*.swo
+.Python
+.env
+.env.*
+*.sqlite3
+*.db
+
+# 🧩 Django Logs, Media, and Migrations
+logs/
+*.log
+debug.log
+db.sqlite3
+media/
+
+**/migrations/*.py
+!**/migrations/__init__.py
+*.mo
+
+# 🛠 IDE & Editor
+.vscode/
+.idea/
+*.iml
+*.sublime-workspace
+*.sublime-project
+
+# 💻 System Files
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
+*~
+
+# 📦 Dependencies
+pip-log.txt
+pip-delete-this-directory.txt
+poetry.lock
+Pipfile
+Pipfile.lock
+
+# 🧪 Build / Distribution / Cache
+*.egg
+*.egg-info/
+dist/
+build/
+*.manifest
+.pytest_cache/
+.tox/
+.nox/
+.coverage
+htmlcov/
+coverage.xml
+*.cover
+
+# 🐳 Docker
+docker-compose.override.yml
+.env.production
+.env.local
+.env.development
+.env.test
+/secrets/
+
+# ⏱ Celery & Redis
+celerybeat-schedule
+celerybeat.pid
+
+# 🖼 Images (if you want to ignore all image uploads)
+# *.jpg
+# *.jpeg
+# *.png
+
+# 📘 Swagger / API Docs
+swagger.json
+swagger.yaml
+

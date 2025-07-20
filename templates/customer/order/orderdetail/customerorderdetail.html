@@ -1,0 +1,79 @@
+{% extends 'customer/base.html' %}
+{% block content %}
+<section class="page-content">
+    <!-- PAGE-BANNER START -->
+    <div class="page-banner-area photo-3 margin-bottom-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="page-banner-menu">
+                        <h2 class="page-banner-title">Shopping Cart</h2>
+                        <ul>
+                            <li>Order List</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- PAGE-BANNER END -->
+    <!-- SHOPPING-CART-AREA START -->
+    <div class="shopping-cart-area margin-bottom-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-content table-responsive">
+                        <p><strong>Order ID:</strong> {{ ord_obj.id }}</p>
+                        <p><strong>Order Status:</strong> {{ ord_obj.order_status }}</p>
+                        <p><strong>Order On:</strong> {{ ord_obj.created_at }}</p>
+                        <p><strong>Shipping Address:</strong> {{ ord_obj.shipping_address }}</p>
+                        <hr>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="product-thumbnail">SN</th>
+                                    <th class="product-name">Item Image</th>
+                                    <th class="product-edit">Item</th>
+                                    <th class="product-price">Rate</th>
+                                    <th class="product-quantity">Quantity</th>
+                                    <th class="product-quantity">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cp in ord_obj.cart.cartproduct_set.all %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        <a href="{% url 'product_detail' cp.product.slug %}">
+                                            {% with cp.product.product_images.first as img %}
+                                            {% if img %}
+                                            <img src="{{ img.image.url }}" height="100px" width="150px"
+                                                alt="{{ cp.product.name }}">
+                                            {% endif %}
+                                            {% endwith %}
+                                        </a>
+
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'product_detail' cp.product.slug %}" target="_blank">
+                                            {{cp.product.name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ cp.rate }}</td>
+                                    <td>{{ cp.quantity }}</td>
+                                    <td>{{ cp.subtotal }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- SHOPPING-CART-AREA END -->
+
+</section>
+{% endblock %}

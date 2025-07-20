@@ -1,0 +1,80 @@
+
+{% for related in related_products %}
+<div class="single-product">
+    <div class="product-photo">
+        
+        <a href="{% url 'product_detail' related.slug %}">
+            <img class="primary-photo" src="{{ related.product_images.first.image.url }}" alt="{{ related.name }}" alt="" />
+            {% if related.product_images.all|length > 1 %}
+            <img class="secondary-photo" src="{{ related.product_images.all.1.image.url }}" alt="{{ related.name }}" alt="" />
+            {% endif %}
+        </a>
+        <div class="pro-action">
+            <a href="{% url 'add_to_cart' related.pk %}" class="action-btn"><i class="sp-shopping-cart"></i><span>Add to cart</span></a>
+        </div>
+    </div>
+    <div class="product-brief">
+        <h2><a href="{% url 'product_detail' related.slug %}">{{ related.name }}</a></h2>
+        <h3>{{ related.current_price }}</h3>
+    </div>
+</div>
+
+{% endfor %}
+
+
+
+
+
+
+
+<!-- <div class="single-product">
+    <div class="product-photo">
+
+        <a href="#">
+            <img class="primary-photo" src="img/new-collection/new-2/1.jpg" alt="" />
+            <img class="secondary-photo" src="img/new-collection/new-2/5.jpg" alt="" />
+        </a>
+        <div class="pro-action">
+            <a href="#" class="action-btn"><i class="sp-heart"></i><span>Wishlist</span></a>
+            <a href="#" class="action-btn"><i class="sp-shopping-cart"></i><span>Add to cart</span></a>
+            <a href="#" class="action-btn"><i class="sp-compare-alt"></i><span>Compare</span></a>
+        </div>
+    </div>
+    <div class="product-brief">
+        <h2><a href="#">Randomised Words</a></h2>
+        <h3>$500.00</h3><div class="row">
+    {% for related in related_products %}
+    <div class="col-md-3 col-sm-4 col-xs-6">
+        <div class="single-product">
+            <div class="product-photo">
+                <a href="{% url 'product_detail' related.slug %}">
+                    <img class="primary-photo" src="{{ related.product_images.first.image.url }}" alt="{{ related.name }}" />
+                    {% if related.product_images.all|length > 1 %}
+                        <img class="secondary-photo" src="{{ related.product_images.all.1.image.url }}" alt="{{ related.name }}" />
+                    {% endif %}
+                </a>
+                <div class="pro-action">
+                    <a href="#" class="action-btn"><i class="sp-heart"></i><span>Wishlist</span></a>
+                    <a href="#" class="action-btn"><i class="sp-shopping-cart"></i><span>Add to cart</span></a>
+                    <a href="#" class="action-btn"><i class="sp-compare-alt"></i><span>Compare</span></a>
+                </div>
+            </div>
+            <div class="product-brief">
+                <h2><a href="{% url 'product_detail' related.slug %}">{{ related.name }}</a></h2>
+                <h3>
+                    {% if related.current_price %}
+                        ${{ related.current_price }}
+                    {% else %}
+                        <span class="text-muted">Price not set</span>
+                    {% endif %}
+                </h3>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center">No related products found.</p>
+    {% endfor %}
+</div>
+
+    </div>
+</div> -->

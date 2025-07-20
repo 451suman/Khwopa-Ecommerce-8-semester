@@ -1,0 +1,80 @@
+{% extends 'customer/base.html' %}
+{% block content %}
+<section class="page-content">
+
+    <!-- SINGLE-PRODUCT-AREA START -->
+    {% include 'customer/product_details/others/productdetail.html' %}
+    <!-- SINGLE-PRODUCT-AREA END -->
+    <!-- SINGLE-PRODUCT-REVIEWS-AREA START -->
+    <div class="single-product-reviews-area margin-bottom-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    {% include 'customer/product_details/others/product_description.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- SINGLE-PRODUCT-REVIEWS-AREA END -->
+    <!-- SINGLE-PRODUCT-RELATED-AREA START -->
+    <div class="single-product-related-area margin-bottom-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="related-product-title">
+                        <h3>Related Product</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="active-related-product shop-grid">
+            <!-- Single-product start -->
+            {% include 'customer/product_details/others/related_products.html' %}
+            <!-- Single-product end -->
+
+        </div>
+    </div>
+    <!-- SINGLE-PRODUCT-RELATED-AREA END -->
+    <!-- SERVICE-AREA START -->
+    <div class="service-area margin-bottom-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="single-service">
+                        <div class="service-icon">
+                            <i class="sp-transport"></i>
+                        </div>
+                        <div class="service-brief">
+                            <h3>free shipping</h3>
+                            <p>There are many variations of passages of Lorem Ipsum available, alteration</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="single-service">
+                        <div class="service-icon">
+                            <i class="sp-head-phone"></i>
+                        </div>
+                        <div class="service-brief">
+                            <h3>help line</h3>
+                            <p>(+112) 1925184203 - call any time for any support Lorem Ipsum available, alteration </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="single-service">
+                        <div class="service-icon">
+                            <i class="sp-business"></i>
+                        </div>
+                        <div class="service-brief">
+                            <h3>money back guarantee</h3>
+                            <p>There are many variations of passages of Lorem Ipsum available, alteration</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- SERVICE-AREA END -->
+</section>
+{% endblock %}

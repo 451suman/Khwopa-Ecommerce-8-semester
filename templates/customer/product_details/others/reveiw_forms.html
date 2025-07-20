@@ -1,0 +1,50 @@
+{% if can_review %}
+
+<div class="col-md-7 col-sm-12">
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>Add a Review</strong></div>
+        <div class="panel-body">
+            <form action="#">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Your name" name="firstname" />
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-control" placeholder="Your email" name="email" />
+                </div>
+
+                <div class="form-group">
+                    <label>Your Rating</label>
+                    <div>
+                        <a href="#"><i class="sp-star"></i></a>
+                        <a href="#"><i class="sp-star"></i></a>
+                        <a href="#"><i class="sp-star"></i></a>
+                        <a href="#"><i class="sp-star"></i></a>
+                        <a href="#"><i class="sp-star"></i></a>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <textarea class="form-control" rows="4" placeholder="Your review"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    Submit Review
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+{% else %}
+<div class="col-md-7 col-sm-12">
+    <div class="panel panel-default">
+        {% if user.is_authenticated %}
+        <div class="panel-heading"><strong>You Have Already Reviewed This Product.</strong></div>
+        {% else %}
+        <div class="panel-heading"><strong>Login To Review. 👉 <a href="{% url 'customer_login' %}">Click
+                    Here</a></strong>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endif %}

@@ -1,0 +1,44 @@
+
+    <h2>Total Reviews: {{reviewcount}}</h2>
+    <h3>
+      Total Rating: {% for i in "12345" %} {% if forloop.counter <= average_rating %} ⭐ {% else %} <i class="sp-star"></i>
+      {% endif %} {% endfor %}
+    </h3>
+
+    <div class="row">
+      <!-- Comments Section (Left, Smaller) -->
+      <div class="col-md-5 col-sm-12">
+        <div class="panel panel-default">
+          <div class="panel-heading"><strong>User Reviews</strong></div>
+          <div class="panel-body">
+            <ul class="list-unstyled">
+              {% for review in all_review %}
+              <li>
+                <div class="media">
+                  <div class="media-body">
+                    <h4 class="media-heading">
+                      {{ review.user.full_name }}
+                      <small> <i>{{ review.created_at}}</i></small>
+                    </h4>
+                    <p>
+                      <span class="pro-comments-rating">
+                        {% for i in "12345" %} 
+                        {% if forloop.counter <= review.rating %} ⭐ {% else %} <i class="sp-star"></i>
+                        {% endif %} {% endfor %}
+                      </span>
+                    </p>
+                    <p>{{ review.comment }}</p>
+                  </div>
+                </div>
+              </li>
+              {% endfor %}
+
+              <!-- Add more reviews as needed -->
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review Form Section (Right, Wider) -->
+      
+    <!-- .row -->

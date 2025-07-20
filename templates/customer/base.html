@@ -1,0 +1,177 @@
+{% load static %}
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<title>Khwopa</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="apple-touch-icon" href="apple-touch-icon.png">
+	<!-- Place favicon.ico in the root directory -->
+
+	<!-- Google Font -->
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,500.00,700,300' rel='stylesheet' type='text/css'>
+	<!-- all css here -->
+	<link rel="stylesheet" href="{% static 'customer/css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'customer/css/animate.css' %}">
+	<link rel="stylesheet" href="{% static 'customer/css/jquery-ui.min.css' %}">
+	<link rel="stylesheet" href="{% static 'customer/css/meanmenu.min.css' %}">
+	<link rel="stylesheet" href="{% static 'customer/lib/css/nivo-slider.css' %}">
+	<link rel="stylesheet" href="{% static 'customer/css/owl.carousel.css' %}">
+	<link rel="stylesheet" href="{% static 'customer/css/shopick-icon.css' %}">
+	<link rel="stylesheet" href="{% static 'customer/css/pe-icon-7-stroke.css' %}">
+	<link rel="stylesheet" href="{% static 'customer/css/lightbox.min.css' %}">
+	<link rel="stylesheet" href="{% static 'customer/style.css' %}">
+	<link rel="stylesheet" href="{% static 'customer/css/responsive.css' %}">
+
+
+	<!-- CDN alternative -->
+
+
+	<!-- modernizr css -->
+	<script src="{% static 'customer/js/vendor/modernizr-2.8.3.min.js' %}"></script>
+</head>
+
+<body>
+	<!-- HEADER-AREA START -->
+	<header class="header-area">
+		<!-- Header-Top Start -->
+		{% include 'customer/navbar/header.html' %}
+		<!-- Header-Top End -->
+		{% include 'customer/navbar/navbar.html' %}
+	</header>
+
+	{# Form non-field errors #}
+	<!-- {% if form.non_field_errors %}
+	<div class="alert alert-danger">
+		{% for error in form.non_field_errors %}
+		{{ error }}
+		{% endfor %}
+	</div>
+	{% endif %} -->
+
+
+	{# Django messages #}
+	{% if messages %}
+	{% for message in messages %}
+	<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" aria-live="assertive">
+		{{ message }}
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	{% endfor %}
+	{% endif %}
+
+
+
+
+	<!-- HEADER-AREA END -->
+	{% block content %}
+	{% endblock %}
+	<!-- FOOTER-AREA START -->
+	<footer class="footer-area">
+		<div class="footer-top">
+			<div class="footer">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-4 col-sm-4 col-xs-12">
+							<div class="single-footer footer-logo">
+								<img src="img/logo.png" alt="" />
+								<p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a
+									piece of classical Latin literature from 45 BC, making it over 2000 years old.</p>
+							</div>
+						</div>
+						<div class="col-md-3 col-sm-4 col-xs-12">
+							<div class="single-footer footer-contact">
+								<h2>contact us</h2>
+								<ul>
+									<li>
+										<i class="sp-phone"></i>
+										<span>+019 (111) 25184203</span>
+									</li>
+									<li>
+										<i class="sp-email"></i>
+										<span>company@domain.com</span>
+										<span>company@email.info</span>
+									</li>
+									<li>
+										<i class="sp-map-marker"></i>
+										<span>777/ab Rampura Bonosri</span>
+										<span>North DC-3050 USA.</span>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<div class="col-md-2 hidden-sm col-xs-12">
+							<div class="single-footer footer-menu">
+								<h2>company</h2>
+								<ul>
+									<li><a href="#">Account</a></li>
+									<li><a href="#">Log in</a></li>
+									<li><a href="#">Regester</a></li>
+									<li><a href="#">Shop</a></li>
+									<li><a href="#">Chakeout</a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="col-md-3 col-sm-4 col-xs-12">
+							<div class="single-footer footer-message">
+								<form action="#">
+									<h2>Quick contact</h2>
+									<div class="footer-message-box">
+										<input type="text" placeholder="your email address" />
+										<textarea placeholder="your messege"></textarea>
+										<input type="submit" value="submit" />
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="copyright">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6 col-sm-6 col-xs-12">
+						<div class="copyright-brief">
+							<p>Copyright &copy; <a href="#">Codecarnival</a> All right reserved</p>
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-6 col-xs-12">
+						<div class="footer-social text-right">
+							<a href="#"><i class="sp-facebook"></i></a>
+							<a href="#"><i class="sp-twitter"></i></a>
+							<a href="#"><i class="sp-linkedin"></i></a>
+							<a href="#"><i class="sp-google"></i></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
+	<!-- FOOTER-AREA END -->
+	<!-- all js here -->
+	<!-- jquery latest version -->
+	<script src="{% static 'customer/js/vendor/jquery-1.12.0.min.js' %}"></script>
+	<script src="{% static 'customer/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'customer/lib/js/jquery.nivo.slider.js' %}"></script>
+	<script src="{% static 'customer/lib/home.js' %}"></script>
+	<script src="{% static 'customer/js/owl.carousel.min.js' %}"></script>
+	<script src="{% static 'customer/js/jquery.meanmenu.js' %}"></script>
+	<script src="{% static 'customer/js/jquery-ui.min.js' %}"></script>
+	<script src="{% static 'customer/js/lightbox.min.js' %}"></script>
+	<script src="{% static 'customer/js/countdon.min.js' %}"></script>
+	<script src="{% static 'customer/js/wow.min.js' %}"></script>
+	<script type="text/javascript">
+		new WOW().init();
+	</script>
+	<script src="{% static 'customer/js/plugins.js' %}"></script>
+	<script src="{% static 'customer/js/main.js' %}"></script>
+</body>
+
+</html>

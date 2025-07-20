@@ -1,0 +1,49 @@
+{% extends 'customer/base.html' %}
+{% block content %}
+
+{% include 'customer/product/top/banner.html' %}
+
+<h2 class="text-center mb-4 fw-bold">✨ list of {{ title }}</h2>
+
+{{ names }}
+
+{% if vendors %}
+<div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+    {% for vendor in vendors %}
+        {% if vendor.id %}
+        <div
+            style="width: 300px; border: 1px solid #ddd; border-radius: 10px; padding: 1rem; background: #fafafa; text-align: center;">
+            
+            <a href="{% url 'vendor_product_list' vendor.id %}">
+                {% if vendor.shop_image %}
+                <img src="{{ vendor.shop_image.url }}" alt="Shop Image"
+                    style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
+                {% else %}
+                <div
+                    style="width: 100%; height: 200px; background-color: #ccc; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                    No Image
+                </div>
+                {% endif %}
+            </a>
+
+            <a href="{% url 'vendor_product_list' vendor.id %}">
+                <h4 style="margin-top: 1rem;">
+                    {{ vendor.vendor_name }}
+                    {% if vendor.is_authorized %}
+                    <span title="Authorized" style="color: green;">✔️</span>
+                    {% endif %}
+                </h4>
+            </a>
+
+            <p><strong>Email:</strong> {{ vendor.email }}</p>
+            <p><strong>Phone:</strong> {{ vendor.phone }}</p>
+            <p><strong>Address:</strong> {{ vendor.address }}</p>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-center text-muted">Empty List</p>
+{% endif %}
+
+{% endblock %}

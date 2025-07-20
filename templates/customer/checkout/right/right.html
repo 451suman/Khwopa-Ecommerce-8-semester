@@ -1,0 +1,62 @@
+<div class="col-md-12">
+    <div class="your-order">
+        <h3 class="title-7 margin-bottom-50">Your Order</h3>
+        <div class="your-order-table table-responsive">
+            <table style="color: black !important;">
+                <thead>
+                    <tr>
+                        <th class="product-name"><strong>Image</strong></th>
+                        <th class="product-name"><strong>Product</strong></th>
+                        <th class="product-total"><strong>Total</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cp in cart.cartproduct_set.all %}
+
+                    <tr>
+                        <td><img src="{{cp.product.product_images.first.image.url}}" alt=""
+                                style="width: 150px; height: 100px;"></td>
+                        <td class="product-name">{{cp.product.name}} X {{cp.quantity}}</td>
+                        <td class="product-total">Rs.{{cp.subtotal}}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td></td>
+                        <td class="product-name order-total">Order Total</td>
+                        <td class="product-total order-total">Rs.{{cart.total}}</td>
+                    </tr>
+
+
+                </tbody>
+            </table>
+            <div class="payment-method">
+                <!-- <div class="payment-accordion">
+                    ACCORDION START
+                    <h3 class="payment-accordion-toggle active">Direct Bank Transfer</h3>
+                    <div class="payment-content default">
+                        <p>Make your payment directly into our bank account. Please use your
+                            Order ID as the payment reference. Your order won’t be shipped until
+                            the funds have cleared in our account.</p>
+                    </div>
+                    ACCORDION END
+                    ACCORDION START
+                    <h3 class="payment-accordion-toggle">Cheque Payment</h3>
+                    <div class="payment-content">
+                        <p>Please send your cheque to Store Name, Store Street, Store Town,
+                            Store State / County, Store Postcode.</p>
+                    </div>
+                    ACCORDION END
+                    ACCORDION START
+                    <h3 class="payment-accordion-toggle">PayPal</h3>
+                    <div class="payment-content">
+                        <p>Pay via PayPal; you can pay with your credit card if you don’t have a
+                            PayPal account.</p>
+                        <a href="#"><img src="img/bg/payment.png" alt="" /></a>
+                    </div>
+                    ACCORDION END
+                </div> -->
+
+            </div>
+        </div>
+    </div>
+</div>

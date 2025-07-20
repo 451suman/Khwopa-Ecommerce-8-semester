@@ -1,0 +1,110 @@
+{% extends 'customer/base.html' %}
+{% block content %}
+
+
+<!-- PAGE-CONTENT START -->
+<section class="page-content">
+    <!-- PAGE-BANNER START -->
+    <div class="page-banner-area  margin-bottom-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="page-banner-menu">
+                        <h2 class="page-banner-title">Login</h2>
+                        <ul>
+                            <li><a href="index.html">home</a></li>
+                            <li>Login</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- PAGE-BANNER END -->
+
+    <div class="lognin-area">
+        <div class="container">
+            <div class="row">
+                <!-- Registered-Customers Start -->
+                <div class="col-md-12">
+                    <form action="{% url 'customer_signup' %}" method="post">
+                        {% csrf_token %}
+                        <div class="new-customers">
+                            <h2 class="login-title">NEW CUSTOMERS</h2>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <input type="text" name="full_name" class="custom-form" placeholder="Full Name"
+                                        value="{{ form.full_name.value|default_if_none:'' }}">
+                                    {{ form.full_name.errors }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <input type="text" name="address" class="custom-form" placeholder="Address"
+                                        value="{{ form.address.value|default_if_none:'' }}">
+                                    {{ form.address.errors }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <input type="text" name="phone" class="custom-form" placeholder="Phone Number"
+                                        value="{{ form.phone.value|default_if_none:'' }}">
+                                    {{ form.phone.errors }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <input type="email" name="email" class="custom-form" placeholder="Email"
+                                        value="{{ form.email.value|default_if_none:'' }}">
+                                    {{ form.email.errors }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <input type="password" name="password1" class="custom-form" placeholder="Password">
+                                    {{ form.password1.errors }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <input type="password" name="password2" class="custom-form"
+                                        placeholder="Confirm Password">
+                                    {{ form.password2.errors }}
+                                </div>
+                            </div>
+
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="create-account" checked="checked" />
+                                    Sign up for our newsletter!
+                                </label>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <input type="submit" class="custom-form custom-submit no-margin" value="Register" />
+                                </div>
+                                <div class="col-sm-6">
+                                    <input type="reset" class="custom-form custom-submit no-margin" value="Clear" />
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BRAND-LOGO-AREA END -->
+</section>
+<!-- PAGE-CONTENT END -->
+
+
+{% endblock content %}

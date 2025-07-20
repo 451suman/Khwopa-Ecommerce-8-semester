@@ -1,0 +1,99 @@
+<div class="single-product-aea margin-bottom-80" style="margin-top: 50px;">
+    <div class="container">
+        <div class="row">
+            <!-- Product Image Preview -->
+            <div class="col-md-5 col-sm-5 col-xs-12">
+                <div class="single-product-tab-content">
+                    <div class="tab-content">
+                        {% for image in product.product_images.all %}
+                        <div role="tabpanel" class="tab-pane {% if forloop.first %}active{% endif %}"
+                            id="img-{{ forloop.counter }}">
+                            <img src="{{ image.image.url }}" alt="{{ product.name }}" />
+                            <a href="{{ image.image.url }}" data-lightbox="roadtrip" data-title="{{ product.name }}">
+                                <span class="view-full-screen">
+                                    <i class="sp-full-view"></i> view full screen
+                                </span>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <ul class="nav nav-tabs">
+                        {% for image in product.product_images.all %}
+                        <li class="{% if forloop.first %}active{% endif %}">
+                            <a href="#img-{{ forloop.counter }}" data-toggle="tab">
+                                <img src="{{ image.image.url }}" alt="{{ product.name }}" />
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Product Details -->
+            <div class="col-md-7 col-sm-7 col-xs-12">
+                <div class="single-product-description">
+                    <h3 class="title-3">{{ product.name }}</h3>
+                    <h4>
+                        Rs.{{ product.current_price }}
+                        {% if product.previous_price %}
+                        / <del>Rs.{{ product.previous_price }}</del>
+                        {% endif %}
+                    </h4>
+                    <div class="pro-color">
+                        <span>Color:</span>
+                        <a href="#" class="color-box-product" title="{{ product.color.name }}"
+                            style="background-color: {{ product.color.name|lower }};"> </a>
+                        <span>
+                           
+                        </span>
+                         Total Rating:{% for i in "12345" %}
+                            {% if forloop.counter <= average_rating %} ⭐ {% else %} <i class="sp-star"></i>
+                                <!-- Empty star for the remaining ones -->
+                                {% endif %}
+                                {% endfor %}
+
+                    </div>
+
+
+                    <!-- Dynamic Sizes -->
+                    {% if product.sizes.exists %}
+                    <div class="pro-size">
+                        <span>Available Sizes</span>
+                        {% for size in product.sizes.all %}
+                        <a href="#">{{ size.name }}</a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Quantity & Add to Cart -->
+                    <div class="product-counts fix margin-top-80">
+                        <div class="single-pro-add-cart">
+                            <a class="shop-now " style="margin-bottom: 10px;"
+                                href="{% url 'add_to_cart' product.pk %}">Add to
+                                cart</a>
+                        </div>
+                    </div>
+
+
+                    <!-- Category & Tags -->
+                    <div class="categories-tags">
+                        {% if product.category %}
+                        <div class="categories">
+                            <span>Category:</span>
+                            <a href="#">{{ product.category.name }}</a>
+                        </div>
+                        {% endif %}
+                        {% if product.tag.exists %}
+                        <div class="categories tags">
+                            <span>Tags:</span>
+                            {% for tag in product.tag.all %}
+                            <a href="#">{{ tag.name }}{% if not forloop.last %}, {% endif %}</a>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
