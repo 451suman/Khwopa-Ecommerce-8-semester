@@ -79,12 +79,15 @@ class ProductImageAdmin(admin.ModelAdmin):
 from django.contrib import admin
 from .models import Cart, CartProduct, Order, Review
 
+class ClassProductTable(admin.TabularInline):
+    model = CartProduct
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "total", "created_a")
     search_fields = ("user__username",)
     list_filter = ("created_a",)
+    inlines = [ClassProductTable]
 
 
 @admin.register(CartProduct)

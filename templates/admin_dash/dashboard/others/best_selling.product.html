@@ -1,0 +1,44 @@
+<div class="col d-flex">
+  <div class="card radius-10 w-100">
+    <div class="card-body">
+      <div class="d-flex align-items-center">
+        <div>
+          <h6 class="font-weight-bold mb-0">Best Selling Products</h6>
+        </div>
+        <div class="dropdown ms-auto">
+          <div
+            class="cursor-pointer text-dark font-24 dropdown-toggle dropdown-toggle-nocaret"
+            data-bs-toggle="dropdown"
+          >
+            <i class="bx bx-dots-horizontal-rounded"></i>
+          </div>
+          <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="javaScript:;">Action</a>
+            <a class="dropdown-item" href="javaScript:;">Another action</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="javaScript:;">Something else here</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="best-selling-products p-3 mb-3">
+      {% for product in top_products_data %}
+      <div class="d-flex align-items-center">
+        <div class="product-img">
+          <img
+            src="assets/images/icons/ice-cream-cornet.png"
+            class="p-1"
+            alt=""
+          />
+        </div>
+        <div class="ps-3">
+          <h6 class="mb-0 font-weight-bold">{{ product.name}}</h6>
+          <p class="mb-0 text-secondary">$29/Each 56 Orders</p>
+        </div>
+        <p class="ms-auto mb-0 text-purple">$521.52</p>
+      </div>
+      <hr />
+      {% endfor %}
+    </div>
+  </div>
+</div>

@@ -98,6 +98,7 @@ class Product(TimeStampedModel):
     )
 
     stock = models.PositiveIntegerField(default=0, null=True, blank=True)
+    
 
     # Colors handled through ProductVariant
     # colors = models.ManyToManyField(Color, through="ProductVariant", related_name="products")
@@ -161,7 +162,7 @@ class Cart(models.Model):
     created_a = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return "Cart:" + str(self.id)
+        return f"Cart:{ str(self.id)}, User: {self.user.email}"
 
 
 class CartProduct(models.Model):
@@ -172,7 +173,7 @@ class CartProduct(models.Model):
     subtotal = models.PositiveIntegerField()
 
     def __str__(self):
-        return "Cart:" + str(self.cart.id) + "CartProduct: " + str(self.id)
+        return self.product.name
 
 
 ORDER_STATUS = (
@@ -186,6 +187,7 @@ ORDER_STATUS = (
 
 class Order(models.Model):
     cart = models.OneToOneField(Cart, on_delete=models.CASCADE)
+    cart_products = models.ManyToManyField(CartProduct)
     user = models.ForeignKey(
         CustomUser, on_delete=models.SET_NULL, null=True, blank=True
     )
@@ -203,6 +205,16 @@ class Order(models.Model):
 
     def __str__(self):
         return "Order: " + str(self.id)
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # Save first to have an ID for M2M
+
+        # Get all CartProduct related to the cart
+        related_cart_products = CartProduct.objects.filter(cart=self.cart)
+
+        # Assign those CartProduct instances to the M2M field
+        self.cart_products.set(related_cart_products)
+        
 
 
 class Review(models.Model):
