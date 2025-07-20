@@ -72,10 +72,10 @@ celerybeat-schedule
 celerybeat.pid
 
 🖼 Images (if you want to ignore all image uploads)
-*.jpg
-*.jpeg
-*.png
-*.svg
+# *.jpg
+# *.jpeg
+# *.png
+# *.svg
 
 # 📘 Swagger / API Docs
 swagger.json
