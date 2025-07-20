@@ -1,13 +1,11 @@
+import random
 from django.db import models
+from django.utils.text import slugify
+from django.contrib.auth import get_user_model
 from common.models import TimeStampedModel
 from common.utils import generate_secret_key
 
-from django.db import models
-from django.contrib.auth import get_user_model
-from django.utils.text import slugify
-
 User = get_user_model()
-
 
 class Vendor(TimeStampedModel):
     user = models.OneToOneField(User, on_delete=models.PROTECT)
@@ -35,7 +33,7 @@ class Vendor(TimeStampedModel):
     )
     is_active = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
-    slug = models.SlugField(unique=False, null=True, blank=True)
+    slug = models.SlugField(blank=True)
 
     def __str__(self):
         return self.vendor_name
@@ -46,17 +44,22 @@ class Vendor(TimeStampedModel):
             models.Index(fields=["pan_no"]),
         ]
 
-def save(self, *args, **kwargs):
-    if not self.secret_key:
-        self.secret_key = generate_secret_key()
-    if not self.access_key:
-        self.access_key = generate_secret_key()
-    if not self.slug:
-        base_slug = slugify(self.vendor_name)
-        slug = base_slug
-        counter = 1
-        while Vendor.objects.filter(slug=slug).exists():
-            slug = f"{base_slug}-{counter}"
-            counter += 1
-        self.slug = slug
-    super().save(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        if not self.secret_key:
+            self.secret_key = generate_secret_key()
+        if not self.access_key:
+            self.access_key = generate_secret_key()
+
+        if not self.slug or self.slug.strip() == "":
+            base_slug = slugify(self.vendor_name)
+            slug = base_slug
+            counter = 1
+            # Ensure the slug is unique (even during updates)
+            check = Vendor.objects.filter(slug=slug).exclude(pk=self.pk).exists()
+            if check:
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
+
+        super().save(*args, **kwargs)

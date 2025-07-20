@@ -50,7 +50,7 @@
                         <!-- <a href="#"><i class="sp-star rating-2"></i></a> -->
                 </div>
                 <h2><a href="{% url 'product_detail' slug=product.slug %}">{{product.name}}</a></h2>
-                <h3>${{product.current_price}}</h3>
+                <h3>Rs {{product.current_price}}</h3>
             </div>
         </div>
         {% endfor %}
