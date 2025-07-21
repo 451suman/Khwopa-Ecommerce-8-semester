@@ -339,55 +339,64 @@ class ManageCartView(EcomMixin, View):
         # print (cp_id, action)
         return redirect("my-cart")
 
-
+from django.contrib import messages
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
-
+from django.views.generic.edit import CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 class CheckoutView(LoginRequiredMixin, CreateView):
-    model = Order  # Define the model here
+    model = Order
     template_name = "customer/checkout/checkout.html"
     form_class = CheckoutForm
     success_url = reverse_lazy("home")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        cart_id = self.request.session.get("cart_id", None)
+        cart_id = self.request.session.get("cart_id")
+        cart_obj = None
         if cart_id:
-            cart_obj = Cart.objects.get(id=cart_id)
-        else:
-            cart_obj = None
-
+            try:
+                cart_obj = Cart.objects.get(id=cart_id)
+            except Cart.DoesNotExist:
+                cart_obj = None
         context["cart"] = cart_obj
         return context
 
     def form_valid(self, form):
         cart_id = self.request.session.get("cart_id")
-        if cart_id:
-            cart_obj = Cart.objects.get(id=cart_id)
-
-            # Check if an order already exists for this cart
-            existing_order = Order.objects.filter(cart=cart_obj).first()
-            if existing_order:
-                messages.warning(
-                    self.request, "An order has already been placed for this cart."
-                )
-                return redirect(self.success_url)
-            form.instance.user = self.request.user
-            form.instance.cart = cart_obj
-            form.instance.subtotal = cart_obj.total
-            form.instance.discount = 0
-            form.instance.total = cart_obj.total
-            form.instance.order_status = "Order Received"
-            
-
-            # Clear cart_id from session
-            del self.request.session["cart_id"]
-
-            messages.success(self.request, "Order has been received")
-        else:
+        if not cart_id:
+            messages.error(self.request, "No active cart found. Please add items to your cart first.")
             return redirect("home")
 
-        return super().form_valid(form)
+        try:
+            cart_obj = Cart.objects.get(id=cart_id)
+        except Cart.DoesNotExist:
+            messages.error(self.request, "Cart not found. Please try again.")
+            return redirect("home")
+
+        # Check if an order already exists for this cart
+        if Order.objects.filter(cart=cart_obj).exists():
+            messages.warning(self.request, "An order has already been placed for this cart.")
+            return redirect(self.success_url)
+
+        # Set form fields before saving
+        form.instance.user = self.request.user
+        form.instance.cart = cart_obj
+        form.instance.subtotal = cart_obj.total
+        form.instance.discount = 0
+        form.instance.total = cart_obj.total
+        form.instance.order_status = "Order Received"
+
+        # Clear cart_id from session
+        del self.request.session["cart_id"]
+
+        response = super().form_valid(form)  # This saves the order
+
+        messages.success(self.request, "Your order has been received successfully!")
+
+        return response
+
 
 
 class OrderListView(LoginRequiredMixin, ListView):

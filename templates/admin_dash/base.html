@@ -37,9 +37,11 @@
 </head>
 
 <body>
+    {% if user.is_authenticated %}
     {% include 'admin_dash/nav/left.html' %}
-    {% include 'admin_dash/nav/top.html' %}
 
+    {% include 'admin_dash/nav/top.html' %}
+    {% endif %}
     {% block content %}
     {% endblock content %}
 

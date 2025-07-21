@@ -9,8 +9,11 @@ from accounts.models import CustomUser
 from .forms import CustomUserCreationForm, CustomerLoginForm
 
 
-class WelcomePage(TemplateView):
-    template_name = "customer/welcome_page/welcomepage.html"
+class WelcomePage(View):
+    # template_name = "customer/welcome_page/welcomepage.html"
+
+    def get(self, request):
+        return redirect("home")
 
 
 class CustomerSignUpView(View):

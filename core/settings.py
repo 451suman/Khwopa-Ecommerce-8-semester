@@ -51,7 +51,11 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",  # Debug toolbar middleware
+
+    # custom middleware
+    "custom_middleware.admin_middleware.AdminOrVendor",
 ]
+
 
 ROOT_URLCONF = "core.urls"
 
@@ -157,3 +161,16 @@ DEBUG_TOOLBAR_PANELS = [
     "debug_toolbar.panels.logging.LoggingPanel",
     "debug_toolbar.panels.redirects.RedirectsPanel",
 ]
+
+
+
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.DEBUG: "secondary",
+    messages.INFO:"info",
+    messages.WARNING:"warning",
+    messages.ERROR:"danger",
+    messages.SUCCESS:"success",
+
+
+}
