@@ -1,11 +1,11 @@
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 
 from accounts import models
 from django.contrib.auth import get_user_model
 
-from products.models import Order, Review
+from products.models import Order, Product, Review
 
 User = get_user_model()
 
@@ -36,4 +36,41 @@ class DashboardView(AdminRequiredMixin, TemplateView):
         ).order_by("-created_at")[:6]
         context["orders"] = Order.objects.select_related("user").all()
         context["new_orders"] = Order.objects.filter(order_status="Order Received")
+        return context
+
+
+# views.py
+from django.views.generic import ListView
+from products.models import Product
+from django.db.models import Prefetch, Avg, Count, Q
+
+class ProductListView(ListView):
+    model = Product
+    template_name = "admin_dash/productlist/productlist.html"
+    context_object_name = "products"
+    paginate_by = 5
+
+    def get_queryset(self):
+        queryset = Product.objects.prefetch_related("product_images", "review_set")
+        user = self.request.user
+        if user.is_superuser or user.is_staff:
+            queryset = queryset
+            
+        elif hasattr(user, "vendor") and user.vendor:
+            queryset = queryset.filter(vendor=user.vendor)
+        else:
+            return Product.objects.none()
+
+        search = self.request.GET.get("search", "")
+        if search:
+            queryset = queryset.filter(Q(name__icontains=search) | Q(description__icontains=search))
+
+        return queryset.annotate(
+            avg_rating=Avg("review__rating"),
+            review_count=Count("review")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["search"] = self.request.GET.get("search", "")
         return context
