@@ -22,21 +22,55 @@ class AdminRequiredMixin(object):
             messages.error(request, "You must be an admin, vendor, or staff to access this page.")
             return redirect("admin_login")
 
+from django.views.generic import TemplateView
+from django.contrib.auth import get_user_model
+from products.models import Review, Order
+from accounts.models import CustomUser
+
+User = get_user_model()
 
 class DashboardView(AdminRequiredMixin, TemplateView):
     template_name = "admin_dash/dashboard/dashboard.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["user_count"] = User.objects.count()
-        context["recent_reviews"] = Review.objects.select_related(
-            "user", "product"
-        ).prefetch_related(
-            "product__product_images"
-        ).order_by("-created_at")[:6]
-        context["orders"] = Order.objects.select_related("user").all()
-        context["new_orders"] = Order.objects.filter(order_status="Order Received")
+        user = self.request.user
+
+        if user.is_superuser or user.is_staff:
+            # Admin: show everything
+            context["user_count"] = User.objects.count()
+            context["recent_reviews"] = Review.objects.select_related("user", "product") \
+                .prefetch_related("product__product_images") \
+                .order_by("-created_at")[:6]
+            context["orders"] = Order.objects.select_related("user").all()
+            context["new_orders"] = context["orders"].filter(order_status="Order Received")
+
+        elif hasattr(user, "vendor") and user.is_vendor:
+            # Vendor: show vendor-specific data
+            vendor = user.vendor
+            context["user_count"] = User.objects.filter(vendor=vendor).count()  # optional, depends on use case
+
+            context["recent_reviews"] = Review.objects.select_related("user", "product") \
+                .filter(product__vendor=vendor) \
+                .prefetch_related("product__product_images") \
+                .order_by("-created_at")[:6]
+
+            context["orders"] = Order.objects.filter(
+                cart__cartproduct__product__vendor=vendor
+            ).select_related("user").distinct()
+
+            context["new_orders"] = context["orders"].filter(order_status="Order Received")
+
+        else:
+            # Should not occur due to AdminRequiredMixin
+            context["user_count"] = 0
+            context["recent_reviews"] = []
+            context["orders"] = []
+            context["new_orders"] = []
+
         return context
+
+
 
 
 # views.py
@@ -55,7 +89,7 @@ class ProductListView(ListView):
         user = self.request.user
         if user.is_superuser or user.is_staff:
             queryset = queryset
-            
+
         elif hasattr(user, "vendor") and user.vendor:
             queryset = queryset.filter(vendor=user.vendor)
         else:
