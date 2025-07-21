@@ -378,6 +378,7 @@ class CheckoutView(LoginRequiredMixin, CreateView):
             form.instance.discount = 0
             form.instance.total = cart_obj.total
             form.instance.order_status = "Order Received"
+            
 
             # Clear cart_id from session
             del self.request.session["cart_id"]
