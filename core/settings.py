@@ -53,7 +53,7 @@ MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",  # Debug toolbar middleware
 
     # custom middleware
-    "custom_middleware.admin_middleware.AdminOrVendor",
+    # "custom_middleware.admin_middleware.AdminOrVendor",
 ]
 
 
@@ -62,7 +62,7 @@ ROOT_URLCONF = "core.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": ["templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
