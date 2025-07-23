@@ -14,12 +14,9 @@ urlpatterns = [
     path("products/", include("products.urls")),
     # api
     path("api/", include("products.api.urls")),  # product api
-
-
     # admin url
     path("dashboard/account/", include("accounts.accounts_admin.urls")),
     path("dashboard/product/", include("products.products_admin.urls")),
-
 ] + debug_toolbar_urls()
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

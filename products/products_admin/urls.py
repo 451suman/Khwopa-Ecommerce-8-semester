@@ -4,8 +4,6 @@ from products.products_admin.views import DashboardView, ProductListView
 
 
 urlpatterns = [
-      path("dashboard/",DashboardView.as_view(),name="dashboard_admin"),
-      path("product-list/",ProductListView.as_view(),name="product_list_admin"),
-
-
+    path("home/", DashboardView.as_view(), name="dashboard_admin"),
+    path("product-list/", ProductListView.as_view(), name="product_list_admin"),
 ]
