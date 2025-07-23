@@ -9,18 +9,21 @@ from products.models import Order, Product, Review
 
 User = get_user_model()
 
+
 class AdminRequiredMixin(object):
     def dispatch(self, request, *args, **kwargs):
-        if (
-            request.user.is_authenticated
-            and (models.CustomUser.objects.get(email=request.user.email).is_vendor
-                 or request.user.is_staff
-                 or request.user.is_superuser)
+        if request.user.is_authenticated and (
+            models.CustomUser.objects.get(email=request.user.email).is_vendor
+            or request.user.is_staff
+            or request.user.is_superuser
         ):
             return super().dispatch(request, *args, **kwargs)
         else:
-            messages.error(request, "You must be an admin, vendor, or staff to access this page.")
+            messages.error(
+                request, "You must be an admin, vendor, or staff to access this page."
+            )
             return redirect("admin_login")
+
 
 from django.views.generic import TemplateView
 from django.contrib.auth import get_user_model
@@ -28,6 +31,7 @@ from products.models import Review, Order
 from accounts.models import CustomUser
 
 User = get_user_model()
+
 
 class DashboardView(AdminRequiredMixin, TemplateView):
     template_name = "admin_dash/dashboard/dashboard.html"
@@ -39,27 +43,39 @@ class DashboardView(AdminRequiredMixin, TemplateView):
         if user.is_superuser or user.is_staff:
             # Admin: show everything
             context["user_count"] = User.objects.count()
-            context["recent_reviews"] = Review.objects.select_related("user", "product") \
-                .prefetch_related("product__product_images") \
+            context["recent_reviews"] = (
+                Review.objects.select_related("user", "product")
+                .prefetch_related("product__product_images")
                 .order_by("-created_at")[:6]
+            )
             context["orders"] = Order.objects.select_related("user").all()
-            context["new_orders"] = context["orders"].filter(order_status="Order Received")
+            context["new_orders"] = context["orders"].filter(
+                order_status="Order Received"
+            )
 
         elif hasattr(user, "vendor") and user.is_vendor:
             # Vendor: show vendor-specific data
             vendor = user.vendor
-            context["user_count"] = User.objects.filter(vendor=vendor).count()  # optional, depends on use case
+            context["user_count"] = User.objects.filter(
+                vendor=vendor
+            ).count()  # optional, depends on use case
 
-            context["recent_reviews"] = Review.objects.select_related("user", "product") \
-                .filter(product__vendor=vendor) \
-                .prefetch_related("product__product_images") \
+            context["recent_reviews"] = (
+                Review.objects.select_related("user", "product")
+                .filter(product__vendor=vendor)
+                .prefetch_related("product__product_images")
                 .order_by("-created_at")[:6]
+            )
 
-            context["orders"] = Order.objects.filter(
-                cart__cartproduct__product__vendor=vendor
-            ).select_related("user").distinct()
+            context["orders"] = (
+                Order.objects.filter(cart__cartproduct__product__vendor=vendor)
+                .select_related("user")
+                .distinct()
+            )
 
-            context["new_orders"] = context["orders"].filter(order_status="Order Received")
+            context["new_orders"] = context["orders"].filter(
+                order_status="Order Received"
+            )
 
         else:
             # Should not occur due to AdminRequiredMixin
@@ -71,12 +87,11 @@ class DashboardView(AdminRequiredMixin, TemplateView):
         return context
 
 
-
-
 # views.py
 from django.views.generic import ListView
 from products.models import Product
 from django.db.models import Prefetch, Avg, Count, Q
+
 
 class ProductListView(ListView):
     model = Product
@@ -97,11 +112,12 @@ class ProductListView(ListView):
 
         search = self.request.GET.get("search", "")
         if search:
-            queryset = queryset.filter(Q(name__icontains=search) | Q(description__icontains=search))
+            queryset = queryset.filter(
+                Q(name__icontains=search) | Q(description__icontains=search)
+            )
 
         return queryset.annotate(
-            avg_rating=Avg("review__rating"),
-            review_count=Count("review")
+            avg_rating=Avg("review__rating"), review_count=Count("review")
         )
 
     def get_context_data(self, **kwargs):
