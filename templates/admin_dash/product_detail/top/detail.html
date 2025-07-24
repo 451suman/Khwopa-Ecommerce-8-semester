@@ -1,0 +1,39 @@
+<div class="row g-0">
+  <div class="col-md-4">
+    {% with product.product_images.all|first as image %}
+      {% if image %}
+        <img src="{{ image.image.url }}" class="img-fluid rounded" alt="{{ product.name }}" />
+      {% else %}
+        <img src="{% static 'images/no-image.png' %}" class="img-fluid rounded" alt="No Image" />
+      {% endif %}
+    {% endwith %}
+  </div>
+  <div class="col-md-8">
+    <div class="card-body">
+      <h6 class="card-title">{{ product.name }}</h6>
+      <h4>   Vendor : {{ product.vendor.vendor_name }}</h4>
+
+      <div class="cursor-pointer my-2">
+        {% for i in "12345" %}
+          {% if forloop.counter <= product.avg_rating|default:0 %}
+           ⭐
+          {% else %}
+            <i class="bx bxs-star text-muted"></i>
+          {% endif %}
+        {% endfor %}
+      </div>
+      
+
+      <div class="clearfix">
+        <p class="mb-0 float-start fw-bold">
+          {% if product.previous_price %}
+            <span class="me-2 text-decoration-line-through text-secondary">${{ product.previous_price }}</span>
+          {% endif %}
+          <span>${{ product.current_price }}</span>
+        </p>
+      </div>
+      <div>
+      </div>
+    </div>
+  </div>
+</div>

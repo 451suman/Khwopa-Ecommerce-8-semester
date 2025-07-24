@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from accounts import models
 from django.contrib.auth import get_user_model
@@ -10,7 +10,7 @@ from products.models import Order, Product, Review
 User = get_user_model()
 
 
-class AdminRequiredMixin(object):
+class AdminOrMerchantRequiredMixin(object):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated and (
             models.CustomUser.objects.get(email=request.user.email).is_vendor
@@ -33,7 +33,7 @@ from accounts.models import CustomUser
 User = get_user_model()
 
 
-class DashboardView(AdminRequiredMixin, TemplateView):
+class DashboardView(AdminOrMerchantRequiredMixin, TemplateView):
     template_name = "admin_dash/dashboard/dashboard.html"
 
     def get_context_data(self, **kwargs):
@@ -93,7 +93,7 @@ from products.models import Product
 from django.db.models import Prefetch, Avg, Count, Q
 
 
-class ProductListView(ListView):
+class ProductListView(AdminOrMerchantRequiredMixin, ListView):
     model = Product
     template_name = "admin_dash/productlist/productlist.html"
     context_object_name = "products"
@@ -123,4 +123,28 @@ class ProductListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["search"] = self.request.GET.get("search", "")
+        return context
+
+
+class AdminProductDetails(AdminOrMerchantRequiredMixin, DetailView):
+    template_name = "admin_dash/product_detail/product_detail.html"
+    queryset = Product.objects.select_related("vendor", "category").prefetch_related("product_images", "review_set").all()
+    context_object_name = "product"
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
+    
+    def get_queryset(self):
+        queryset =super().get_queryset()
+        if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
+            queryset = queryset.filter(vendor=self.request.user.vendor)
+        return queryset
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        reviews = self.object.review_set.all()
+        
+        context["reviews"] = reviews
+        context["review_count"] = reviews.count()
+        context["avg_rating"] = round(reviews.aggregate(Avg("rating"))["rating__avg"] or 0)
+
+        # Optional: context["total_orders"] = ... (if needed)
         return context

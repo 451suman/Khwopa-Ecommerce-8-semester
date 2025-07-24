@@ -13,9 +13,8 @@ class AdminLoginView(View):
         if form.is_valid():
             email = form.cleaned_data["email"]
             password = form.cleaned_data["password"]
-
             user = authenticate(request, username=email, password=password)
-            if user is not None and (user.is_superuser or user.is_staff or getattr(user, 'is_vendor', False)):
+            if user is not None and (user.is_superuser or user.is_staff or user.is_vendor or getattr(user, 'is_vendor', False)):
                 login(request, user)
                 return redirect("dashboard_admin")  # change to your dashboard route
             else:

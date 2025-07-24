@@ -1,0 +1,46 @@
+<div class="card-body">
+  <ul class="nav nav-tabs nav-primary mb-0" role="tablist">
+    <li class="nav-item" role="presentation">
+      <a class="nav-link active" data-bs-toggle="tab" href="#tab-description" role="tab">
+        <i class='bx bx-comment-detail font-18 me-1'></i> Product Description
+      </a>
+    </li>
+   
+    <li class="nav-item" role="presentation">
+      <a class="nav-link" data-bs-toggle="tab" href="#tab-reviews" role="tab">
+        <i class='bx bx-star font-18 me-1'></i> Reviews
+      </a>
+    </li>
+  </ul>
+
+  <div class="tab-content pt-3">
+    <!-- Description Tab -->
+    <div class="tab-pane fade show active" id="tab-description" role="tabpanel">
+      {{ product.description|linebreaksbr|default:"No detailed description provided." }}
+    </div>
+
+
+<!-- Reviews Tab -->
+<div class="tab-pane fade" id="tab-reviews" role="tabpanel">
+
+  {% if reviews %}
+    {% for review in reviews %}
+      <div class="mb-3 border-bottom pb-2">
+        <strong>{{ review.user.full_name }}</strong> — {{ review.created_at|date:"M d, Y" }}<br />
+        {% for i in "12345" %}
+          {% if forloop.counter <= review.rating %}
+            <i class="bx bxs-star text-warning"></i>
+          {% else %}
+            <i class="bx bxs-star text-muted"></i>
+          {% endif %}
+        {% endfor %}
+        <p class="mt-1">{{ review.comment }}</p>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No reviews yet.</p>
+  {% endif %}
+</div>
+
+  </div>
+</div>
