@@ -12,6 +12,7 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")),
     path("vendor/", include("vendor.urls")),
     path("products/", include("products.urls")),
+     path('summernote/', include('django_summernote.urls')),
     # api
     path("api/", include("products.api.urls")),  # product api
     # admin url

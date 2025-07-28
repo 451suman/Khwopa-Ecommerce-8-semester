@@ -37,10 +37,15 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "rest_framework",
     "debug_toolbar",  # Remove in production
+    "crispy_forms",
+    "crispy_bootstrap5",
+    "django_summernote",
     "accounts",
     "vendor",
     "products",
 ]
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -51,7 +56,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",  # Debug toolbar middleware
-
     # custom middleware
     # "custom_middleware.admin_middleware.AdminOrVendor",
 ]
@@ -163,14 +167,16 @@ DEBUG_TOOLBAR_PANELS = [
 ]
 
 
-
 from django.contrib.messages import constants as messages
+
 MESSAGE_TAGS = {
     messages.DEBUG: "secondary",
-    messages.INFO:"info",
-    messages.WARNING:"warning",
-    messages.ERROR:"danger",
-    messages.SUCCESS:"success",
-
-
+    messages.INFO: "info",
+    messages.WARNING: "warning",
+    messages.ERROR: "danger",
+    messages.SUCCESS: "success",
 }
+
+
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'

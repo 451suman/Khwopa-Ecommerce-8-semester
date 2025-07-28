@@ -1,0 +1,84 @@
+{% extends 'admin_dash/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>{% if form.instance.pk %}Update{% else %}Add{% endif %} Product</h2>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" id="product-form">
+    {% csrf_token %}
+
+    {{ form|crispy }}
+
+    <h4 class="mt-4">Product Images</h4>
+    <div id="formset-container">
+      {{ formset.management_form }}
+
+      {% for form in formset.forms %}
+        <div class="formset-form border p-3 mb-2 position-relative">
+          {% if form.instance.pk and form.instance.image %}
+            <img src="{{ form.instance.image.url }}" alt="Image" style="max-height: 150px;" class="img-thumbnail mb-2" />
+          {% endif %}
+          {{ form.image.label_tag }}
+          {{ form.image }}
+
+          {% if form.DELETE %}
+            <div class="form-check mt-2">
+              {{ form.DELETE }} {{ form.DELETE.label_tag }}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Hidden empty form template -->
+    <div id="empty-form-template" style="display:none;">
+      {{ formset.empty_form.as_p }}
+    </div>
+
+    <button type="button" class="btn btn-outline-primary mt-2" id="add-image-btn">➕ Add Another Image</button>
+
+    <div class="mt-4">
+      <button type="submit" class="btn btn-success">
+        {% if form.instance.pk %}Update{% else %}Create{% endif %} Product
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const addButton = document.getElementById("add-image-btn");
+  const formsetContainer = document.getElementById("formset-container");
+  const totalForms = document.getElementById("id_productimage_set-TOTAL_FORMS");
+
+  addButton.addEventListener("click", function () {
+    const currentFormCount = parseInt(totalForms.value);
+
+    // Get empty form HTML template
+    let newFormHtml = document.getElementById("empty-form-template").innerHTML;
+
+    // Replace __prefix__ with current form count for correct form indices
+    newFormHtml = newFormHtml.replace(/__prefix__/g, currentFormCount);
+
+    // Create a new div to wrap the form fields with same styling
+    const newFormDiv = document.createElement("div");
+    newFormDiv.classList.add("formset-form", "border", "p-3", "mb-2", "position-relative");
+    newFormDiv.innerHTML = newFormHtml;
+
+    // Append the new form div to the container
+    formsetContainer.appendChild(newFormDiv);
+
+    // Update TOTAL_FORMS count
+    totalForms.value = currentFormCount + 1;
+  });
+});
+</script>
+
+{% endblock %}

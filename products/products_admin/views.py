@@ -6,6 +6,7 @@ from accounts import models
 from django.contrib.auth import get_user_model
 
 from products.models import Order, Product, Review
+from products.products_admin.forms import ProductForm
 
 User = get_user_model()
 
@@ -148,3 +149,71 @@ class AdminProductDetails(AdminOrMerchantRequiredMixin, DetailView):
 
         # Optional: context["total_orders"] = ... (if needed)
         return context
+
+from django.views.generic import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from django.contrib import messages
+from django.shortcuts import redirect, render
+from .forms import ProductForm, ProductImageFormSet
+from products.models import Product
+
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = "admin_dash/product_add_update/product_add.html"
+    success_url = reverse_lazy("product_list_admin")
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        formset = ProductImageFormSet()
+        return render(request, self.template_name, {"form": form, "formset": formset})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, request.FILES)  # ✅ Fixed
+        formset = ProductImageFormSet(request.POST, request.FILES)
+        if form.is_valid() and formset.is_valid():
+            product = form.save()
+            formset.instance = product
+            formset.save()
+            messages.success(request, "Product created successfully!")
+            return redirect(self.success_url)
+        else:
+            messages.error(request, "Please correct the errors below.")
+        return render(request, self.template_name, {"form": form, "formset": formset})
+
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = "admin_dash/product_add_update/product_add.html"
+    success_url = reverse_lazy("product_list_admin")
+
+    def get(self, request, *args, **kwargs):
+        product = self.get_object()
+        form = self.form_class(instance=product)
+        formset = ProductImageFormSet(instance=product)
+        return render(request, self.template_name, {"form": form, "formset": formset})
+
+    def post(self, request, *args, **kwargs):
+        product = self.get_object()
+        form = self.form_class(request.POST, instance=product)
+        formset = ProductImageFormSet(request.POST, request.FILES, instance=product)
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            messages.success(request, "Product updated successfully!")
+            return redirect(self.success_url)
+        else:
+            messages.error(request, "Please correct the errors below.")
+        return render(request, self.template_name, {"form": form, "formset": formset})
+
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    template_name = "admin_dash/product_add_update/product_confirm_delete.html"
+    success_url = reverse_lazy("product_list_admin")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Product deleted successfully!")
+        return super().delete(request, *args, **kwargs)

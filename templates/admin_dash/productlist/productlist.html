@@ -10,9 +10,9 @@
 					<div class="card-body">
 						<div class="row align-items-center">
 							<div class="col-lg-3 col-xl-2">
-								<a href="" class="btn btn-primary mb-3 mb-lg-0">
+								<a href="{% url 'product_add' %}" class="btn btn-primary mb-3 mb-lg-0">
 									<i class='bx bxs-plus-square'></i> New Product
-									{{ request.user.is_vendor }}
+									
 								</a>
 							</div>
 							<div class="col-lg-9 col-xl-10">
