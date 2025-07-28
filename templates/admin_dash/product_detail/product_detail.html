@@ -1,5 +1,6 @@
 {% extends 'admin_dash/base.html' %}
 {% block content %}
+{% include 'admin_dash/product_detail/deletemodal.html' %}
 <div class="page-wrapper">
   <div class="page-content">
 
@@ -45,7 +46,9 @@
           {% if request.user.is_superuser or request.user.is_vendor and request.user.vendor == product.vendor %}
 
               <a href="{% url 'product_update' product.slug %}" class="btn btn-sm btn-primary">Edit</a>
-              <a href="" class="btn btn-sm btn-danger">Delete</a>
+                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Delete
+                </button>
               {% endif %}
             </div>
             <h4 class="card-title">{{ product.name }}</h4>

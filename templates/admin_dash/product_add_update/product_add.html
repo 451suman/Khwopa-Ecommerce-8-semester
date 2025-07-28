@@ -1,41 +1,45 @@
 {% extends 'admin_dash/base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
-<div class="container mt-5">
-  <h2>{{ action }} Product</h2>
-  <form method="post" enctype="multipart/form-data" id="product-form">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <h4 class="mt-4">Product Images</h4>
-    <div id="formset-container">
-      {{ formset.management_form }}
-      {% for form in formset.forms %}
-        <div class="formset-form border p-3 mb-2">
-          {% if form.instance.pk and form.instance.image %}
-            <img src="{{ form.instance.image.url }}" alt="Image" style="max-height: 150px;" class="img-thumbnail mb-2" />
-          {% endif %}
-         
-          {{ form.as_p }}
-          {# Add the remove button, but hide it on the first form #}
-          <button type="button" class="btn btn-sm btn-danger delete-row {% if forloop.first %}d-none{% endif %}">
-            🗑️ Remove
-          </button>
+<div class="page-wrapper">
+  <div class="page-content">
+    <div class="container mt-5">
+      <h2>{{ action }} Product</h2>
+      <form method="post" enctype="multipart/form-data" id="product-form">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <h4 class="mt-4">Product Images</h4>
+        <div id="formset-container">
+          {{ formset.management_form }}
+          {% for form in formset.forms %}
+            <div class="formset-form border p-3 mb-2">
+              {% if form.instance.pk and form.instance.image %}
+                <img src="{{ form.instance.image.url }}" alt="Image" style="max-height: 150px;" class="img-thumbnail mb-2" />
+              {% endif %}
+            
+              {{ form.as_p }}
+              {# Add the remove button, but hide it on the first form #}
+              <button type="button" class="btn btn-sm btn-danger delete-row {% if forloop.first %}d-none{% endif %}">
+                🗑️ Remove
+              </button>
+            </div>
+          {% endfor %}
         </div>
-      {% endfor %}
+        <template id="empty-form-template">
+          <div class="formset-form border p-3 mb-2" id="form-__prefix__">
+            {{ formset.empty_form.as_p }}
+            <button type="button" class="btn btn-sm btn-danger delete-row">
+                🗑️ Remove
+            </button>
+          </div>
+        </template>
+        <button type="button" class="btn btn-outline-primary mt-2" id="add-row">➕ Add Another Image</button>
+        <div class="mt-4">
+          <button type="submit" class="btn btn-success">{{ action }} Product</button>
+        </div>
+      </form>
     </div>
-    <template id="empty-form-template">
-      <div class="formset-form border p-3 mb-2" id="form-__prefix__">
-        {{ formset.empty_form.as_p }}
-        <button type="button" class="btn btn-sm btn-danger delete-row">
-            🗑️ Remove
-        </button>
-      </div>
-    </template>
-    <button type="button" class="btn btn-outline-primary mt-2" id="add-row">➕ Add Another Image</button>
-    <div class="mt-4">
-      <button type="submit" class="btn btn-success">{{ action }} Product</button>
-    </div>
-  </form>
+  </div>
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
