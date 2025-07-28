@@ -165,12 +165,12 @@ class ProductCreateView(CreateView):
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
-        formset = ProductImageFormSet()
+        formset = ProductImageFormSet(prefix="product_images")
         return render(request, self.template_name, {"form": form, "formset": formset})
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST, request.FILES)  # ✅ Fixed
-        formset = ProductImageFormSet(request.POST, request.FILES)
+        form = self.form_class(request.POST, request.FILES)
+        formset = ProductImageFormSet(request.POST, request.FILES, prefix="product_images")
         if form.is_valid() and formset.is_valid():
             product = form.save()
             formset.instance = product
@@ -182,7 +182,6 @@ class ProductCreateView(CreateView):
         return render(request, self.template_name, {"form": form, "formset": formset})
 
 
-
 class ProductUpdateView(UpdateView):
     model = Product
     form_class = ProductForm
@@ -192,13 +191,13 @@ class ProductUpdateView(UpdateView):
     def get(self, request, *args, **kwargs):
         product = self.get_object()
         form = self.form_class(instance=product)
-        formset = ProductImageFormSet(instance=product)
+        formset = ProductImageFormSet(instance=product, prefix="product_images")
         return render(request, self.template_name, {"form": form, "formset": formset})
 
     def post(self, request, *args, **kwargs):
         product = self.get_object()
         form = self.form_class(request.POST, instance=product)
-        formset = ProductImageFormSet(request.POST, request.FILES, instance=product)
+        formset = ProductImageFormSet(request.POST, request.FILES, instance=product, prefix="product_images")
         if form.is_valid() and formset.is_valid():
             form.save()
             formset.save()
@@ -207,7 +206,6 @@ class ProductUpdateView(UpdateView):
         else:
             messages.error(request, "Please correct the errors below.")
         return render(request, self.template_name, {"form": form, "formset": formset})
-
 
 class ProductDeleteView(DeleteView):
     model = Product
