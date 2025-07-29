@@ -1,0 +1,90 @@
+{% extends 'admin_dash/base.html' %}
+{% block content %}
+<!-- <div class="page-wrapper">
+    <div class="page-content"> -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <div id="example_wrapper" class="dataTables_wrapper dt-bootstrap5">
+                {% include 'admin_dash/brands/list/top.html' %}
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table id="example" class="table table-striped table-bordered dataTable" style="width: 100%"
+                            role="grid" aria-describedby="example_info">
+                            <thead>
+                                <tr role="row">
+                                    <th class="sorting_asc" tabindex="0" aria-controls="example" rowspan="1" colspan="1"
+                                        aria-sort="ascending" aria-label="Name: activate to sort column descending"
+                                        style="width: 194.75px">
+                                        SN
+                                    </th>
+                                    <th class="sorting_asc" tabindex="0" aria-controls="example" rowspan="1" colspan="1"
+                                        aria-sort="ascending" aria-label="Name: activate to sort column descending"
+                                        style="width: 194.75px">
+                                        Name
+                                    </th>
+                                    <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1"
+                                        aria-label="Position: activate to sort column ascending"
+                                        style="width: 316.675px">
+                                        Vendor
+                                    </th>
+                                    <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1"
+                                        aria-label="Office: activate to sort column ascending" style="width: 140.95px">
+                                        Logo
+                                    </th>
+
+                                    <th class="sorting" tabindex="0" aria-controls="example" rowspan="1" colspan="1"
+                                        aria-label="Start date: activate to sort column ascending"
+                                        style="width: 131.938px">
+                                        Action
+                                    </th>
+
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for brand in brands %}
+                                <tr role="row" class="odd">
+                                    <td>{{ forloop.counter }}</td>
+                                    <td class="sorting_1">{{ brand.name }}</td>
+                                    <td>{{ brand.vendor }}</td>
+                                    <td>
+                                        {% if brand.logo %}
+                                        <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" height="40">
+                                        {% else %}
+                                        <span class="text-muted">No logo</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+
+                                    </td>
+
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-5">
+                        <div class="dataTables_info" id="example_info" role="status" aria-live="polite">
+                            Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of
+                            {{page_obj.paginator.count }} entries
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-7">
+                        <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
+                            {% include 'admin_dash/brands/list/pagination.html' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- </div> -->
+<!-- </div> -->
+{% endblock content %}

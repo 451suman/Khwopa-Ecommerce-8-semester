@@ -5,7 +5,7 @@ from django.views.generic import TemplateView, ListView, DetailView, CreateView,
 from accounts import models
 from django.contrib.auth import get_user_model
 
-from products.models import Category, Order, Product, Review
+from products.models import Brand, Category, Order, Product, Review
 from products.products_admin.forms import ProductForm
 
 User = get_user_model()
@@ -275,3 +275,11 @@ class CategoryAdminDeleteView(AdminOrMerchantRequiredMixin, DeleteView):
     success_url = reverse_lazy("category_list_admin")
     slug_field = "slug"
     slug_url_kwarg = "slug"
+
+
+
+class BrandAdminListView(AdminOrMerchantRequiredMixin, ListView):
+    queryset = Brand.objects.all()
+    template_name = "admin_dash/brands/list/brand_list.html"
+    context_object_name = "brands"
+    paginate_by = 15
