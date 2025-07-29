@@ -1,8 +1,8 @@
 {% extends 'admin_dash/base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
-<div class="page-wrapper">
-  <div class="page-content">
+<!-- <div class="page-wrapper">
+  <div class="page-content"> -->
     <div class="container mt-5">
       <h2>{{ action }} Product</h2>
       <form method="post" enctype="multipart/form-data" id="product-form">
@@ -39,8 +39,8 @@
         </div>
       </form>
     </div>
-  </div>
-</div>
+  <!-- </div>
+</div> -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const addRowBtn = document.getElementById("add-row");

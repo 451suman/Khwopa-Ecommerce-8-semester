@@ -5,7 +5,7 @@ from django.views.generic import TemplateView, ListView, DetailView, CreateView,
 from accounts import models
 from django.contrib.auth import get_user_model
 
-from products.models import Order, Product, Review
+from products.models import Category, Order, Product, Review
 from products.products_admin.forms import ProductForm
 
 User = get_user_model()
@@ -154,7 +154,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import redirect, render
-from .forms import ProductForm, ProductImageFormSet
+from .forms import AdminCategoryForm, ProductForm, ProductImageFormSet
 from products.models import Product
 
 class ProductCreateView(CreateView):
@@ -215,3 +215,63 @@ class ProductDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(request, "Product deleted successfully!")
         return super().delete(request, *args, **kwargs)
+
+
+
+class CategoryAdminListView(AdminOrMerchantRequiredMixin, ListView):
+    queryset = Category.objects.all().order_by("-arranged")
+    template_name = "admin_dash/category/list/category_list.html"
+    context_object_name = "categories"
+    paginate_by = 15
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
+            queryset = queryset.filter(vendor=self.request.user.vendor)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["total_categories"] = Category.objects.count()
+        return context
+
+class CategoryAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
+    model = Category
+    form_class = AdminCategoryForm
+    template_name = "admin_dash/category/create/category_create.html"
+    success_url = reverse_lazy("category_list_admin")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Category created successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to create category. Please check the form.")
+        return super().form_invalid(form)
+    
+class CategoryAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
+    model = Category
+    form_class = AdminCategoryForm
+    template_name = "admin_dash/category/create/category_create.html"
+    success_url = reverse_lazy("category_list_admin")
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Category updated successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to update category. Please check the form.")
+        return super().form_invalid(form)
+
+
+
+class CategoryAdminDeleteView(AdminOrMerchantRequiredMixin, DeleteView):
+    model = Category
+    template_name = "admin_dash/category/delete/category_delete.html"
+    success_url = reverse_lazy("category_list_admin")
+    slug_field = "slug"
+    slug_url_kwarg = "slug"

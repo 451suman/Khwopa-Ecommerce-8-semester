@@ -1,138 +1,136 @@
 {% extends "admin_dash/base.html" %}
 {% block content %}
-<div class="page-wrapper">
-	<div class="page-content">
 
-		<!-- Search Bar & Create Button -->
-		<div class="row mb-3">
-			<div class="col-12">
-				<div class="card">
-					<div class="card-body">
-						<div class="row align-items-center">
-							<div class="col-lg-3 col-xl-2">
-								<a href="{% url 'product_add' %}" class="btn btn-primary mb-3 mb-lg-0">
-									<i class='bx bxs-plus-square'></i> New Product
-									
-								</a>
-							</div>
-							<div class="col-lg-9 col-xl-10">
-								<form class="float-lg-end" method="get">
-									<div class="row row-cols-lg-auto g-2">
-										<div class="col-12">
-											<div class="position-relative">
-												<input type="text" name="search" value="{{ search }}" class="form-control ps-5" placeholder="Search Product...">
-												<span class="position-absolute top-50 product-show translate-middle-y">
-													<i class="bx bx-search"></i>
-												</span>
-											</div>
-										</div>
-									</div>
-								</form>
+
+<!-- Search Bar & Create Button -->
+<div class="row mb-3">
+<div class="col-12">
+<div class="card">
+	<div class="card-body">
+		<div class="row align-items-center">
+			<div class="col-lg-3 col-xl-2">
+				<a href="{% url 'product_add' %}" class="btn btn-primary mb-3 mb-lg-0">
+					<i class='bx bxs-plus-square'></i> New Product
+					
+				</a>
+			</div>
+			<div class="col-lg-9 col-xl-10">
+				<form class="float-lg-end" method="get">
+					<div class="row row-cols-lg-auto g-2">
+						<div class="col-12">
+							<div class="position-relative">
+								<input type="text" name="search" value="{{ search }}" class="form-control ps-5" placeholder="Search Product...">
+								<span class="position-absolute top-50 product-show translate-middle-y">
+									<i class="bx bx-search"></i>
+								</span>
 							</div>
 						</div>
 					</div>
-				</div>
+				</form>
 			</div>
 		</div>
-
-		<!-- Table View -->
-		<div class="card">
-			<div class="card-body">
-				{% if products %}
-				<div class="table-responsive">
-					<table class="table table-bordered table-hover align-middle">
-						<thead class="table-light">
-							<tr>
-								<th>Image</th>
-								<th>Name</th>
-								<th>Name</th>
-								<th>Price</th>
-								<th>Rating</th>
-								<th>Reviews</th>
-								<th>Actions</th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for product in products %}
-							<tr>
-								<td>
-									{% with product.product_images.all|first as first_image %}
-										{% if first_image %}
-										<img src="{{ first_image.image.url }}" alt="{{ product.name }}" width="60" height="60">
-										{% endif %}
-									{% endwith %}
-								</td>
-								<td>
-									<a href="{% url 'product_detail_admin' slug=product.slug %}">
-										{{ product.name }}
-									</a>
-								</td>
-								<td>
-									{{product.description|truncatechars:50}}
-								</td>
-								<td>
-									{% if product.previous_price %}
-										<span class="text-decoration-line-through text-secondary">${{ product.previous_price }}</span>
-										<span class="fw-bold">${{ product.current_price }}</span>
-									{% else %}
-										<span class="fw-bold">${{ product.current_price }}</span>
-									{% endif %}
-								</td>
-								<td>
-									{% for i in "12345" %}
-										{% if forloop.counter <= product.avg_rating|default:0 %}
-											<i class='bx bxs-star text-warning'></i>
-										{% else %}
-											<i class='bx bxs-star text-secondary'></i>
-										{% endif %}
-									{% endfor %}
-								</td>
-								<td>{{ product.review_count }}</td>
-								<td>
-									<a href="{% url 'product_detail_admin' slug=product.slug %}" class="btn btn-sm btn-outline-primary">
-										View
-									</a>
-								</td>
-							</tr>
-							{% endfor %}
-						</tbody>
-					</table>
-				</div>
-				{% else %}
-					<div class="alert alert-warning text-center">No products found.</div>
-				{% endif %}
-			</div>
-		</div>
-
-		<!-- Pagination -->
-		<div class="mt-4">
-			{% if is_paginated %}
-			<nav aria-label="Page navigation">
-				<ul class="pagination justify-content-center">
-					{% if page_obj.has_previous %}
-					<li class="page-item">
-						<a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}">Previous</a>
-					</li>
-					{% endif %}
-
-					{% for page_num in paginator.page_range %}
-					<li class="page-item {% if page_num == page_obj.number %}active{% endif %}">
-						<a class="page-link" href="?page={{ page_num }}{% if search %}&search={{ search }}{% endif %}">
-							{{ page_num }}
-						</a>
-					</li>
-					{% endfor %}
-
-					{% if page_obj.has_next %}
-					<li class="page-item">
-						<a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}">Next</a>
-					</li>
-					{% endif %}
-				</ul>
-			</nav>
-			{% endif %}
-		</div>
-
 	</div>
 </div>
+</div>
+</div>
+
+<!-- Table View -->
+<div class="card">
+<div class="card-body">
+{% if products %}
+<div class="table-responsive">
+	<table class="table table-bordered table-hover align-middle">
+		<thead class="table-light">
+			<tr>
+				<th>Image</th>
+				<th>Name</th>
+				<th>Name</th>
+				<th>Price</th>
+				<th>Rating</th>
+				<th>Reviews</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for product in products %}
+			<tr>
+				<td>
+					{% with product.product_images.all|first as first_image %}
+						{% if first_image %}
+						<img src="{{ first_image.image.url }}" alt="{{ product.name }}" width="60" height="60">
+						{% endif %}
+					{% endwith %}
+				</td>
+				<td>
+					<a href="{% url 'product_detail_admin' slug=product.slug %}">
+						{{ product.name }}
+					</a>
+				</td>
+				<td>
+					{{product.description|truncatechars:50}}
+				</td>
+				<td>
+					{% if product.previous_price %}
+						<span class="text-decoration-line-through text-secondary">${{ product.previous_price }}</span>
+						<span class="fw-bold">${{ product.current_price }}</span>
+					{% else %}
+						<span class="fw-bold">${{ product.current_price }}</span>
+					{% endif %}
+				</td>
+				<td>
+					{% for i in "12345" %}
+						{% if forloop.counter <= product.avg_rating|default:0 %}
+							<i class='bx bxs-star text-warning'></i>
+						{% else %}
+							<i class='bx bxs-star text-secondary'></i>
+						{% endif %}
+					{% endfor %}
+				</td>
+				<td>{{ product.review_count }}</td>
+				<td>
+					<a href="{% url 'product_detail_admin' slug=product.slug %}" class="btn btn-sm btn-outline-primary">
+						View
+					</a>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% else %}
+	<div class="alert alert-warning text-center">No products found.</div>
+{% endif %}
+</div>
+</div>
+
+<!-- Pagination -->
+<div class="mt-4">
+{% if is_paginated %}
+<nav aria-label="Page navigation">
+<ul class="pagination justify-content-center">
+	{% if page_obj.has_previous %}
+	<li class="page-item">
+		<a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}">Previous</a>
+	</li>
+	{% endif %}
+
+	{% for page_num in paginator.page_range %}
+	<li class="page-item {% if page_num == page_obj.number %}active{% endif %}">
+		<a class="page-link" href="?page={{ page_num }}{% if search %}&search={{ search }}{% endif %}">
+			{{ page_num }}
+		</a>
+	</li>
+	{% endfor %}
+
+	{% if page_obj.has_next %}
+	<li class="page-item">
+		<a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}">Next</a>
+	</li>
+	{% endif %}
+</ul>
+</nav>
+{% endif %}
+</div>
+
+
 {% endblock %}
