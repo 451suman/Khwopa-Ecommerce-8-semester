@@ -10,6 +10,10 @@ from products.products_admin.views import (
     CategoryAdminDeleteView,
     CategoryAdminListView,
     CategoryAdminUpdateView,
+    ColorAdminDeleteView,
+    ColorAdminListView,
+    ColorAdminUpdateView,
+    ColourAdminCreateView,
     DashboardView,
     ProductCreateView,
     ProductDeleteView,
@@ -56,8 +60,8 @@ urlpatterns = [
     path("brand/<int:id>/delete/", BrandADminDeleteView.as_view(), name="brand_delete_admin"),
 
     #color crud
-    path("color/", BrandAdminListView.as_view(), name="color_list_admin"),
-    path("color/add/", BrandAdminCreateView.as_view(), name="color_add_admin"),
-    path("color/<int:id>/edit/", BrandAdminUpdateView.as_view(), name="color_update_admin"),
-    path("color/<int:id>/delete/", BrandADminDeleteView.as_view(), name="color_delete_admin"),
+    path("color/", ColorAdminListView.as_view(), name="color_list_admin"),
+    path("color/add/", ColourAdminCreateView.as_view(), name="color_add_admin"),
+    path("color/<int:id>/edit/", ColorAdminUpdateView.as_view(), name="color_update_admin"),
+    path("color/<int:id>/delete/", ColorAdminDeleteView.as_view(), name="color_delete_admin"),
 ]

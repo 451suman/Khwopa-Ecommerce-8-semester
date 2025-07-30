@@ -336,7 +336,7 @@ class BrandADminDeleteView(AdminOrMerchantRequiredMixin, DeleteView):
 
 class ColorAdminListView(AdminOrMerchantRequiredMixin, ListView):
     queryset = Color.objects.all()
-    template_name = "admin_dash/colour/list"
+    template_name = "admin_dash/colour/list/colour_list.html"
     context_object_name = "objs"
     paginate_by = 15
 
@@ -349,7 +349,7 @@ class ColorAdminListView(AdminOrMerchantRequiredMixin, ListView):
 class ColourAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
     model = Color
     form_class = AdminColorForm
-    template_name = "admin_dash/colours/create/create_color.html"
+    template_name = "admin_dash/colour/create/colour_create.html"
     success_url = reverse_lazy("color_list_admin")
 
     def form_valid(self, form):
@@ -364,8 +364,9 @@ class ColourAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
 class ColorAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
     model = Color
     form_class = AdminColorForm
-    template_name = "admin_dash/colours/create/create_color.html"
+    template_name = "admin_dash/colour/create/colour_create.html"
     success_url = reverse_lazy("color_list_admin")
+    pk_url_kwarg = "id"  
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -374,9 +375,9 @@ class ColorAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
 
     def form_invalid(self, form):
         messages.error(self.request, "Failed to update color. Please check the form.")
-        return super().form_invalid(form)
+        return super().form_invalid(form)    
     
 class ColorAdminDeleteView(AdminOrMerchantRequiredMixin, DeleteView):
     model = Color
-    template_name = "admin_dash/colours/delete/delete_color.html"
     success_url = reverse_lazy("color_list_admin")
+    pk_url_kwarg = "id"

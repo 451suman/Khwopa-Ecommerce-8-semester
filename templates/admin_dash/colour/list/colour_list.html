@@ -44,37 +44,34 @@
                                     <td>{{ forloop.counter }}</td>
                                     <td class="sorting_1">{{ obj.name }}</td>
                                     <td>{{ obj.vendor }}</td>
-                                    
-
                                    <td>
-                                    <a href="{% url 'color_update_admin' id=obj.id %}" class="btn btn-sm btn-primary">Edit</a>
+                                    <a href="{% url 'color_update_admin' obj.id %}" class="btn btn-sm btn-primary">Edit</a>
+                                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ obj.id }}">
+                                            Delete
+                                        </button>
 
-                                    <!-- Trigger Modal -->
-                                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ brand.id }}">
-                                        Delete
-                                    </button>
+                                        <!-- Delete Modal -->
+                                        <div class="modal fade" id="deleteModal-{{ obj.id }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ obj.id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <form method="post" action="{% url 'color_delete_admin' id=obj.id %}">
+                                                        {% csrf_token %}
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5" id="deleteModalLabel-{{ obj.id }}">Confirm Deletion</h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Are you sure you want to delete the color <strong>{{ obj.name }}</strong>?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                    <!-- Delete Modal -->
-                                    <div class="modal fade" id="deleteModal-{{ obj.id }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ brand.id }}" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <form method="post" action="{% url 'color_delete_admin' id=obj.id %}">
-                                            {% csrf_token %}
-                                            <div class="modal-header">
-                                                <h1 class="modal-title fs-5" id="deleteModalLabel-{{ obj.id }}">Confirm Deletion</h1>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Are you sure you want to delete the brand <strong>{{ obj.name }}</strong>?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                                            </div>
-                                            </form>
-                                        </div>
-                                        </div>
-                                    </div>
                                     </td>
 
 
