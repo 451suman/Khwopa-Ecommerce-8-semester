@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
-from products.models import Category, Product, ProductImage
+from products.models import Brand, Category, Color, Product, ProductImage
 
 
 class ProductForm(forms.ModelForm):
@@ -38,3 +38,15 @@ class AdminCategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ["vendor", "name", "arranged"]
+
+
+class AdminBrandForm(forms.ModelForm):
+    class Meta:
+        model = Brand
+        fields = ["vendor", "name", "logo"]
+
+
+class AdminColorForm(forms.ModelForm):
+    class Meta:
+        model = Color
+        fields ="__all__"

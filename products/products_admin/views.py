@@ -5,7 +5,7 @@ from django.views.generic import TemplateView, ListView, DetailView, CreateView,
 from accounts import models
 from django.contrib.auth import get_user_model
 
-from products.models import Brand, Category, Order, Product, Review
+from products.models import Brand, Category, Color, Order, Product, Review
 from products.products_admin.forms import ProductForm
 
 User = get_user_model()
@@ -154,7 +154,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import redirect, render
-from .forms import AdminCategoryForm, ProductForm, ProductImageFormSet
+from .forms import AdminBrandForm, AdminCategoryForm, AdminColorForm, ProductForm, ProductImageFormSet
 from products.models import Product
 
 class ProductCreateView(CreateView):
@@ -283,3 +283,100 @@ class BrandAdminListView(AdminOrMerchantRequiredMixin, ListView):
     template_name = "admin_dash/brands/list/brand_list.html"
     context_object_name = "brands"
     paginate_by = 15
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
+            queryset = queryset.filter(vendor=self.request.user.vendor)
+        return queryset
+
+class BrandAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
+    model = Brand
+    form_class = AdminBrandForm
+    template_name = "admin_dash/brands/create/create_brand.html"
+    success_url = reverse_lazy("brand_list_admin")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Brand created successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to create brand. Please check the form.")
+        return super().form_invalid(form)
+    
+
+class BrandAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
+    model = Brand
+    form_class = AdminBrandForm
+    template_name = "admin_dash/brands/create/create_brand.html"
+    success_url = reverse_lazy("brand_list_admin")
+    pk_url_kwarg = "id"  # changed from slug to id
+
+    def form_valid(self, form):
+        messages.success(self.request, "Brand updated successfully.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to update brand. Please check the form.")
+        return super().form_invalid(form)
+
+
+class BrandADminDeleteView(AdminOrMerchantRequiredMixin, DeleteView):
+    model = Brand
+    template_name = "admin_dash/brands/delete/delete_brand.html"
+    success_url = reverse_lazy("brand_list_admin")
+    pk_url_kwarg = "id"  # changed from slug to id
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Brand deleted successfully.")
+        return super().delete(request, *args, **kwargs)
+
+
+
+class ColorAdminListView(AdminOrMerchantRequiredMixin, ListView):
+    queryset = Color.objects.all()
+    template_name = "admin_dash/colour/list"
+    context_object_name = "objs"
+    paginate_by = 15
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
+            queryset = queryset.filter(vendor=self.request.user.vendor)
+        return queryset
+
+class ColourAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
+    model = Color
+    form_class = AdminColorForm
+    template_name = "admin_dash/colours/create/create_color.html"
+    success_url = reverse_lazy("color_list_admin")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Color created successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to create color. Please check the form.")
+        return super().form_invalid(form)
+
+class ColorAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
+    model = Color
+    form_class = AdminColorForm
+    template_name = "admin_dash/colours/create/create_color.html"
+    success_url = reverse_lazy("color_list_admin")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Color updated successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to update color. Please check the form.")
+        return super().form_invalid(form)
+    
+class ColorAdminDeleteView(AdminOrMerchantRequiredMixin, DeleteView):
+    model = Color
+    template_name = "admin_dash/colours/delete/delete_color.html"
+    success_url = reverse_lazy("color_list_admin")

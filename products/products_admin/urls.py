@@ -2,7 +2,10 @@ from django.urls import path
 
 from products.products_admin.views import (
     AdminProductDetails,
+    BrandADminDeleteView,
+    BrandAdminCreateView,
     BrandAdminListView,
+    BrandAdminUpdateView,
     CategoryAdminCreateView,
     CategoryAdminDeleteView,
     CategoryAdminListView,
@@ -48,5 +51,13 @@ urlpatterns = [
     ),
     # brand crud
     path("brand/", BrandAdminListView.as_view(), name="brand_list_admin"),
-    
+    path("brand/add/", BrandAdminCreateView.as_view(), name="brand_add_admin"),
+    path("brand/<int:id>/edit/", BrandAdminUpdateView.as_view(), name="brand_update_admin"),
+    path("brand/<int:id>/delete/", BrandADminDeleteView.as_view(), name="brand_delete_admin"),
+
+    #color crud
+    path("color/", BrandAdminListView.as_view(), name="color_list_admin"),
+    path("color/add/", BrandAdminCreateView.as_view(), name="color_add_admin"),
+    path("color/<int:id>/edit/", BrandAdminUpdateView.as_view(), name="color_update_admin"),
+    path("color/<int:id>/delete/", BrandADminDeleteView.as_view(), name="color_delete_admin"),
 ]
