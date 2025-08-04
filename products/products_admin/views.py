@@ -11,6 +11,7 @@ from products.products_admin.forms import ProductForm
 User = get_user_model()
 
 
+
 class AdminOrMerchantRequiredMixin(object):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated and (

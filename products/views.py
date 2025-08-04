@@ -37,33 +37,31 @@ class HomeView(ListView):
     context_object_name = "new_products"
 
     def get_queryset(self):
-        new_products = cache.get("new_products")
-        if not new_products:
-            new_products = (
-                Product.objects.prefetch_related("product_images")
-                .annotate(average_rating=Avg("review__rating"))
-                .order_by("-created_at")[:5]
-            )
-            # cache.set("new_products", new_products, 60)
+        # new_products = cache.get("new_products")
+        # if not new_products:
+        new_products = (
+            Product.objects.prefetch_related("product_images")
+            .annotate(average_rating=Avg("review__rating"))
+            .order_by("-created_at")[:5]
+        )
+        # cache.set("new_products", new_products, 60)
         return new_products
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         # Cache categories with annotated product ratings
-        categories = cache.get("categories")
-        if not categories:
-            product_qs = Product.objects.prefetch_related("product_images").annotate(
-                average_rating=Avg("review__rating")
-            )
-            categories = (
-                Category.objects.prefetch_related(
-                    Prefetch("products", queryset=product_qs)
-                )
-                .filter(arranged__isnull=False)
-                .order_by("arranged")
-            )
-            # cache.set("categories", categories, 60)
+        # categories = cache.get("categories")
+        # if not categories:
+        product_qs = Product.objects.prefetch_related("product_images").annotate(
+            average_rating=Avg("review__rating")
+        )
+        categories = (
+            Category.objects.prefetch_related(Prefetch("products", queryset=product_qs))
+            .filter(arranged__isnull=False)
+            .order_by("arranged")
+        )
+        # cache.set("categories", categories, 60)
 
         context["categories"] = categories
 
@@ -102,9 +100,10 @@ def vendor_list_func(request):
     return vendors
 
 
-def brands_list_func (request):
+def brands_list_func(request):
     brands = Brand.objects.all()
     return brands
+
 
 class ProductListView(ListView):
     model = Product
@@ -339,11 +338,13 @@ class ManageCartView(EcomMixin, View):
         # print (cp_id, action)
         return redirect("my-cart")
 
+
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 class CheckoutView(LoginRequiredMixin, CreateView):
     model = Order
@@ -366,7 +367,10 @@ class CheckoutView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         cart_id = self.request.session.get("cart_id")
         if not cart_id:
-            messages.error(self.request, "No active cart found. Please add items to your cart first.")
+            messages.error(
+                self.request,
+                "No active cart found. Please add items to your cart first.",
+            )
             return redirect("home")
 
         try:
@@ -377,7 +381,9 @@ class CheckoutView(LoginRequiredMixin, CreateView):
 
         # Check if an order already exists for this cart
         if Order.objects.filter(cart=cart_obj).exists():
-            messages.warning(self.request, "An order has already been placed for this cart.")
+            messages.warning(
+                self.request, "An order has already been placed for this cart."
+            )
             return redirect(self.success_url)
 
         # Set form fields before saving
@@ -396,7 +402,6 @@ class CheckoutView(LoginRequiredMixin, CreateView):
         messages.success(self.request, "Your order has been received successfully!")
 
         return response
-
 
 
 class OrderListView(LoginRequiredMixin, ListView):
@@ -493,9 +498,6 @@ class VendorProductListView(ListView):
         return context
 
 
-
-
-
 class BrandProductListView(ListView):
     model = Product
     template_name = "customer/product/product_list.html"
@@ -513,5 +515,3 @@ class BrandProductListView(ListView):
         context["brands"] = brands_list_func(self.request)
 
         return context
-
-
