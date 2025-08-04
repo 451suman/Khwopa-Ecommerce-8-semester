@@ -1,15 +1,21 @@
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import (
+    TemplateView,
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
 
 from accounts import models
 from django.contrib.auth import get_user_model
 
-from products.models import Brand, Category, Color, Order, Product, Review
+from products.models import Brand, Category, Color, Order, Product, Review, Size, Tag
 from products.products_admin.forms import ProductForm
 
 User = get_user_model()
-
 
 
 class AdminOrMerchantRequiredMixin(object):
@@ -130,33 +136,50 @@ class ProductListView(AdminOrMerchantRequiredMixin, ListView):
 
 class AdminProductDetails(AdminOrMerchantRequiredMixin, DetailView):
     template_name = "admin_dash/product_detail/product_detail.html"
-    queryset = Product.objects.select_related("vendor", "category").prefetch_related("product_images", "review_set").all()
+    queryset = (
+        Product.objects.select_related("vendor", "category")
+        .prefetch_related("product_images", "review_set")
+        .all()
+    )
     context_object_name = "product"
     slug_field = "slug"
     slug_url_kwarg = "slug"
-    
+
     def get_queryset(self):
-        queryset =super().get_queryset()
+        queryset = super().get_queryset()
         if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
             queryset = queryset.filter(vendor=self.request.user.vendor)
         return queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         reviews = self.object.review_set.all()
-        
+
         context["reviews"] = reviews
         context["review_count"] = reviews.count()
-        context["avg_rating"] = round(reviews.aggregate(Avg("rating"))["rating__avg"] or 0)
+        context["avg_rating"] = round(
+            reviews.aggregate(Avg("rating"))["rating__avg"] or 0
+        )
 
         # Optional: context["total_orders"] = ... (if needed)
         return context
+
 
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import redirect, render
-from .forms import AdminBrandForm, AdminCategoryForm, AdminColorForm, ProductForm, ProductImageFormSet
+from .forms import (
+    AdminBrandForm,
+    AdminCategoryForm,
+    AdminColorForm,
+    AdminSizeForm,
+    AdminTagForm,
+    ProductForm,
+    ProductImageFormSet,
+)
 from products.models import Product
+
 
 class ProductCreateView(CreateView):
     model = Product
@@ -171,7 +194,9 @@ class ProductCreateView(CreateView):
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
-        formset = ProductImageFormSet(request.POST, request.FILES, prefix="product_images")
+        formset = ProductImageFormSet(
+            request.POST, request.FILES, prefix="product_images"
+        )
         if form.is_valid() and formset.is_valid():
             product = form.save()
             formset.instance = product
@@ -198,7 +223,9 @@ class ProductUpdateView(UpdateView):
     def post(self, request, *args, **kwargs):
         product = self.get_object()
         form = self.form_class(request.POST, instance=product)
-        formset = ProductImageFormSet(request.POST, request.FILES, instance=product, prefix="product_images")
+        formset = ProductImageFormSet(
+            request.POST, request.FILES, instance=product, prefix="product_images"
+        )
         if form.is_valid() and formset.is_valid():
             form.save()
             formset.save()
@@ -208,6 +235,7 @@ class ProductUpdateView(UpdateView):
             messages.error(request, "Please correct the errors below.")
         return render(request, self.template_name, {"form": form, "formset": formset})
 
+
 class ProductDeleteView(DeleteView):
     model = Product
     template_name = "admin_dash/product_add_update/product_confirm_delete.html"
@@ -216,7 +244,6 @@ class ProductDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(request, "Product deleted successfully!")
         return super().delete(request, *args, **kwargs)
-
 
 
 class CategoryAdminListView(AdminOrMerchantRequiredMixin, ListView):
@@ -236,6 +263,7 @@ class CategoryAdminListView(AdminOrMerchantRequiredMixin, ListView):
         context["total_categories"] = Category.objects.count()
         return context
 
+
 class CategoryAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
     model = Category
     form_class = AdminCategoryForm
@@ -248,9 +276,12 @@ class CategoryAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, "Failed to create category. Please check the form.")
+        messages.error(
+            self.request, "Failed to create category. Please check the form."
+        )
         return super().form_invalid(form)
-    
+
+
 class CategoryAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
     model = Category
     form_class = AdminCategoryForm
@@ -265,9 +296,10 @@ class CategoryAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, "Failed to update category. Please check the form.")
+        messages.error(
+            self.request, "Failed to update category. Please check the form."
+        )
         return super().form_invalid(form)
-
 
 
 class CategoryAdminDeleteView(AdminOrMerchantRequiredMixin, DeleteView):
@@ -276,7 +308,6 @@ class CategoryAdminDeleteView(AdminOrMerchantRequiredMixin, DeleteView):
     success_url = reverse_lazy("category_list_admin")
     slug_field = "slug"
     slug_url_kwarg = "slug"
-
 
 
 class BrandAdminListView(AdminOrMerchantRequiredMixin, ListView):
@@ -290,6 +321,7 @@ class BrandAdminListView(AdminOrMerchantRequiredMixin, ListView):
         if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
             queryset = queryset.filter(vendor=self.request.user.vendor)
         return queryset
+
 
 class BrandAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
     model = Brand
@@ -305,7 +337,7 @@ class BrandAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
     def form_invalid(self, form):
         messages.error(self.request, "Failed to create brand. Please check the form.")
         return super().form_invalid(form)
-    
+
 
 class BrandAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
     model = Brand
@@ -334,7 +366,6 @@ class BrandADminDeleteView(AdminOrMerchantRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-
 class ColorAdminListView(AdminOrMerchantRequiredMixin, ListView):
     queryset = Color.objects.all()
     template_name = "admin_dash/colour/list/colour_list.html"
@@ -346,6 +377,7 @@ class ColorAdminListView(AdminOrMerchantRequiredMixin, ListView):
         if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
             queryset = queryset.filter(vendor=self.request.user.vendor)
         return queryset
+
 
 class ColourAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
     model = Color
@@ -362,12 +394,13 @@ class ColourAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
         messages.error(self.request, "Failed to create color. Please check the form.")
         return super().form_invalid(form)
 
+
 class ColorAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
     model = Color
     form_class = AdminColorForm
     template_name = "admin_dash/colour/create/colour_create.html"
     success_url = reverse_lazy("color_list_admin")
-    pk_url_kwarg = "id"  
+    pk_url_kwarg = "id"
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -376,9 +409,121 @@ class ColorAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
 
     def form_invalid(self, form):
         messages.error(self.request, "Failed to update color. Please check the form.")
-        return super().form_invalid(form)    
-    
+        return super().form_invalid(form)
+
+
 class ColorAdminDeleteView(AdminOrMerchantRequiredMixin, DeleteView):
     model = Color
     success_url = reverse_lazy("color_list_admin")
+    pk_url_kwarg = "id"
+
+
+# -----------------------------
+
+
+class SizeAdminListView(AdminOrMerchantRequiredMixin, ListView):
+    queryset = Size.objects.all()
+    template_name = "admin_dash/size/list/list.html"
+    context_object_name = "objs"
+    paginate_by = 15
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
+            queryset = queryset.filter(vendor=self.request.user.vendor)
+        return queryset
+
+
+class SizeAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
+    model = Size
+    form_class = AdminSizeForm
+    template_name = "admin_dash/size/create/createform.html"
+    success_url = reverse_lazy("size_list_admin")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Color created successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to create color. Please check the form.")
+        return super().form_invalid(form)
+
+
+class SizeAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
+    model = Size
+    form_class = AdminSizeForm
+    template_name = "admin_dash/size/create/createform.html"
+    success_url = reverse_lazy("size_list_admin")
+    pk_url_kwarg = "id"
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Size updated successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to update Size. Please check the form.")
+        return super().form_invalid(form)
+
+
+class SizeAdminDeleteView(AdminOrMerchantRequiredMixin, DeleteView):
+    model = Size
+    success_url = reverse_lazy("size_list_admin")
+    pk_url_kwarg = "id"
+
+
+# ---------------------
+# for tag i use same tamplets of size because same fields
+
+
+class TagAdminListView(AdminOrMerchantRequiredMixin, ListView):
+    queryset = Tag.objects.all()
+    template_name = "admin_dash/tags/list/list.html"
+    context_object_name = "objs"
+    paginate_by = 15
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
+            queryset = queryset.filter(vendor=self.request.user.vendor)
+        return queryset
+
+
+class TagAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
+    model = Tag
+    form_class = AdminTagForm
+    template_name = "admin_dash/tags/create/createform.html"
+    success_url = reverse_lazy("tag_list_admin")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Color created successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to create color. Please check the form.")
+        return super().form_invalid(form)
+
+
+class TagAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
+    model = Tag
+    form_class = AdminTagForm
+    template_name = "admin_dash/tags/create/createform.html"
+    success_url = reverse_lazy("tag_list_admin")
+    pk_url_kwarg = "id"
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Size updated successfully.")
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to update Size. Please check the form.")
+        return super().form_invalid(form)
+
+
+class TagAdminDeleteView(AdminOrMerchantRequiredMixin, DeleteView):
+    model = Tag
+    success_url = reverse_lazy("tag_list_admin")
     pk_url_kwarg = "id"

@@ -19,6 +19,14 @@ from products.products_admin.views import (
     ProductDeleteView,
     ProductListView,
     ProductUpdateView,
+    SizeAdminCreateView,
+    SizeAdminDeleteView,
+    SizeAdminListView,
+    SizeAdminUpdateView,
+    TagAdminCreateView,
+    TagAdminDeleteView,
+    TagAdminListView,
+    TagAdminUpdateView,
 )
 
 
@@ -56,12 +64,47 @@ urlpatterns = [
     # brand crud
     path("brand/", BrandAdminListView.as_view(), name="brand_list_admin"),
     path("brand/add/", BrandAdminCreateView.as_view(), name="brand_add_admin"),
-    path("brand/<int:id>/edit/", BrandAdminUpdateView.as_view(), name="brand_update_admin"),
-    path("brand/<int:id>/delete/", BrandADminDeleteView.as_view(), name="brand_delete_admin"),
-
-    #color crud
+    path(
+        "brand/<int:id>/edit/",
+        BrandAdminUpdateView.as_view(),
+        name="brand_update_admin",
+    ),
+    path(
+        "brand/<int:id>/delete/",
+        BrandADminDeleteView.as_view(),
+        name="brand_delete_admin",
+    ),
+    # color crud
     path("color/", ColorAdminListView.as_view(), name="color_list_admin"),
     path("color/add/", ColourAdminCreateView.as_view(), name="color_add_admin"),
-    path("color/<int:id>/edit/", ColorAdminUpdateView.as_view(), name="color_update_admin"),
-    path("color/<int:id>/delete/", ColorAdminDeleteView.as_view(), name="color_delete_admin"),
+    path(
+        "color/<int:id>/edit/",
+        ColorAdminUpdateView.as_view(),
+        name="color_update_admin",
+    ),
+    path(
+        "color/<int:id>/delete/",
+        ColorAdminDeleteView.as_view(),
+        name="color_delete_admin",
+    ),
+    # size crud
+    path("size/", SizeAdminListView.as_view(), name="size_list_admin"),
+    path("size/add/", SizeAdminCreateView.as_view(), name="size_add_admin"),
+    path(
+        "size/<int:id>/edit/", SizeAdminUpdateView.as_view(), name="size_update_admin"
+    ),
+    path(
+        "size/<int:id>/delete/",
+        SizeAdminDeleteView.as_view(),
+        name="size_delete_admin",
+    ),
+    # tags
+    path("tag/", TagAdminListView.as_view(), name="tag_list_admin"),
+    path("tag/add/", TagAdminCreateView.as_view(), name="tag_add_admin"),
+    path("tag/<int:id>/edit/", TagAdminUpdateView.as_view(), name="tag_update_admin"),
+    path(
+        "tag/<int:id>/delete/",
+        TagAdminDeleteView.as_view(),
+        name="tags_delete_admin",
+    ),
 ]
