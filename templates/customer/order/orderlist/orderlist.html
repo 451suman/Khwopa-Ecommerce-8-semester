@@ -31,6 +31,7 @@
                                     <th class="product-edit">Amount</th>
                                     <th class="product-price">Order On</th>
                                     <th class="product-quantity">status</th>
+                                    <th class="product-quantity">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -59,6 +60,9 @@
                                     </span>
 
 
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'order_detail' order.id %}" class="btn btn-primary">Details</a>
                                     </td>
 
                                 </tr>
