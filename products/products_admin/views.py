@@ -188,16 +188,18 @@ class ProductCreateView(CreateView):
     success_url = reverse_lazy("product_list_admin")
 
     def get(self, request, *args, **kwargs):
-        form = self.form_class()
+        form = self.form_class(user=request.user)
         formset = ProductImageFormSet(prefix="product_images")
         return render(request, self.template_name, {"form": form, "formset": formset})
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST, request.FILES)
+        form = self.form_class(request.POST, request.FILES, user=request.user)
         formset = ProductImageFormSet(
             request.POST, request.FILES, prefix="product_images"
         )
         if form.is_valid() and formset.is_valid():
+            if self.request.user.is_vendor:
+                form.instance.vendor = self.request.user.vendor
             product = form.save()
             formset.instance = product
             formset.save()
@@ -216,13 +218,13 @@ class ProductUpdateView(UpdateView):
 
     def get(self, request, *args, **kwargs):
         product = self.get_object()
-        form = self.form_class(instance=product)
+        form = self.form_class(instance=product, user=request.user)
         formset = ProductImageFormSet(instance=product, prefix="product_images")
         return render(request, self.template_name, {"form": form, "formset": formset})
 
     def post(self, request, *args, **kwargs):
         product = self.get_object()
-        form = self.form_class(request.POST, instance=product)
+        form = self.form_class(request.POST, instance=product, user=request.user)
         formset = ProductImageFormSet(
             request.POST, request.FILES, instance=product, prefix="product_images"
         )
@@ -270,10 +272,16 @@ class CategoryAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
     template_name = "admin_dash/category/create/category_create.html"
     success_url = reverse_lazy("category_list_admin")
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user  # Pass user to the form
+        return kwargs
+
     def form_valid(self, form):
-        response = super().form_valid(form)
+        if self.request.user.is_vendor:
+            form.instance.vendor = self.request.user.vendor
         messages.success(self.request, "Category created successfully.")
-        return response
+        return super().form_valid(form)
 
     def form_invalid(self, form):
         messages.error(
@@ -290,10 +298,16 @@ class CategoryAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
     slug_field = "slug"
     slug_url_kwarg = "slug"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user  # Pass user to the form
+        return kwargs
+
     def form_valid(self, form):
-        response = super().form_valid(form)
+        if self.request.user.is_vendor:
+            form.instance.vendor = self.request.user.vendor
         messages.success(self.request, "Category updated successfully.")
-        return response
+        return super().form_valid(form)
 
     def form_invalid(self, form):
         messages.error(
@@ -329,10 +343,16 @@ class BrandAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
     template_name = "admin_dash/brands/create/create_brand.html"
     success_url = reverse_lazy("brand_list_admin")
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user  # Pass user to the form
+        return kwargs
+
     def form_valid(self, form):
-        response = super().form_valid(form)
+        if self.request.user.is_vendor:
+            form.instance.vendor = self.request.user.vendor
         messages.success(self.request, "Brand created successfully.")
-        return response
+        return super().form_valid(form)
 
     def form_invalid(self, form):
         messages.error(self.request, "Failed to create brand. Please check the form.")
@@ -346,7 +366,14 @@ class BrandAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
     success_url = reverse_lazy("brand_list_admin")
     pk_url_kwarg = "id"  # changed from slug to id
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user  # Pass user to the form
+        return kwargs
+
     def form_valid(self, form):
+        if self.request.user.is_vendor:
+            form.instance.vendor = self.request.user.vendor
         messages.success(self.request, "Brand updated successfully.")
         return super().form_valid(form)
 
@@ -452,7 +479,14 @@ class SizeAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
     template_name = "admin_dash/size/create/createform.html"
     success_url = reverse_lazy("size_list_admin")
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user  # Pass user to the form
+        return kwargs
+
     def form_valid(self, form):
+        if self.request.user.is_vendor:
+            form.instance.vendor = self.request.user.vendor
         response = super().form_valid(form)
         messages.success(self.request, "Color created successfully.")
         return response
@@ -469,10 +503,16 @@ class SizeAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
     success_url = reverse_lazy("size_list_admin")
     pk_url_kwarg = "id"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user  # Pass user to the form
+        return kwargs
+
     def form_valid(self, form):
-        response = super().form_valid(form)
+        if self.request.user.is_vendor:
+            form.instance.vendor = self.request.user.vendor
         messages.success(self.request, "Size updated successfully.")
-        return response
+        return super().form_valid(form)
 
     def form_invalid(self, form):
         messages.error(self.request, "Failed to update Size. Please check the form.")
@@ -508,7 +548,14 @@ class TagAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
     template_name = "admin_dash/tags/create/createform.html"
     success_url = reverse_lazy("tag_list_admin")
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user  # Pass user to the form
+        return kwargs
+
     def form_valid(self, form):
+        if self.request.user.is_vendor:
+            form.instance.vendor = self.request.user.vendor
         response = super().form_valid(form)
         messages.success(self.request, "Color created successfully.")
         return response
@@ -525,7 +572,14 @@ class TagAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
     success_url = reverse_lazy("tag_list_admin")
     pk_url_kwarg = "id"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user  # Pass user to the form
+        return kwargs
+
     def form_valid(self, form):
+        if self.request.user.is_vendor:
+            form.instance.vendor = self.request.user.vendor
         response = super().form_valid(form)
         messages.success(self.request, "Size updated successfully.")
         return response

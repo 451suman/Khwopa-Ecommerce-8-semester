@@ -8,6 +8,7 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = [
+            "vendor",
             "name",
             "description",
             "category",
@@ -22,6 +23,19 @@ class ProductForm(forms.ModelForm):
             "is_featured",
             "is_custom_price",
         ]
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)  # Pop user from kwargs
+        super().__init__(*args, **kwargs)
+
+        if self.user:
+            if self.user.is_vendor:
+                # Hide vendor field and set it in the view
+                self.fields["vendor"].widget = forms.HiddenInput()
+                self.fields["vendor"].required = False
+            elif self.user.is_superuser or self.user.is_staff:
+                # Admin: Show all vendors
+                self.fields["vendor"].queryset = Vendor.objects.all()
 
 
 ProductImageFormSet = inlineformset_factory(
@@ -40,11 +54,41 @@ class AdminCategoryForm(forms.ModelForm):
         model = Category
         fields = ["vendor", "name", "arranged"]
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+        if self.user:
+            if self.user.is_vendor:
+                # Hide vendor field and set it in the view
+                self.fields["vendor"].widget = forms.HiddenInput()
+                self.fields["vendor"].required = False
+                self.fields["arranged"].widget = forms.HiddenInput()  # ✅ Corrected
+                self.fields["arranged"].required = (
+                    False  # ✅ Optional if you want to make it optional
+                )
+
+            elif self.user.is_superuser or self.user.is_staff:
+                # Admin: Show all vendors
+                self.fields["vendor"].queryset = Vendor.objects.all()
+
 
 class AdminBrandForm(forms.ModelForm):
     class Meta:
         model = Brand
         fields = ["vendor", "name", "logo"]
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)  # Pop user from kwargs passed form views
+        super().__init__(*args, **kwargs)
+
+        if self.user:
+            if self.user.is_vendor:
+                # Hide vendor field and set it in the view
+                self.fields["vendor"].widget = forms.HiddenInput()
+                self.fields["vendor"].required = False
+            elif self.user.is_superuser or self.user.is_staff:
+                self.fields["vendor"].queryset = Vendor.objects.all()
 
 
 class AdminColorForm(forms.ModelForm):
@@ -71,8 +115,35 @@ class AdminSizeForm(forms.ModelForm):
         model = Size
         fields = "__all__"
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)  # Pop user from kwargs passed form views
+        super().__init__(*args, **kwargs)
+
+        if self.user:
+            if self.user.is_vendor:
+                # Hide vendor field and set it in the view
+                self.fields["vendor"].widget = forms.HiddenInput()
+                self.fields["vendor"].required = False
+            elif self.user.is_superuser or self.user.is_staff:
+                self.fields["vendor"].queryset = Vendor.objects.all()
+
+
+
 
 class AdminTagForm(forms.ModelForm):
     class Meta:
         model = Tag
         fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)  # Pop user from kwargs passed form views
+        super().__init__(*args, **kwargs)
+
+        if self.user:
+            if self.user.is_vendor:
+                # Hide vendor field and set it in the view
+                self.fields["vendor"].widget = forms.HiddenInput()
+                self.fields["vendor"].required = False
+            elif self.user.is_superuser or self.user.is_staff:
+                self.fields["vendor"].queryset = Vendor.objects.all()
+
