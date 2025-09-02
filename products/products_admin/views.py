@@ -385,10 +385,16 @@ class ColourAdminCreateView(AdminOrMerchantRequiredMixin, CreateView):
     template_name = "admin_dash/colour/create/colour_create.html"
     success_url = reverse_lazy("color_list_admin")
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user  # Pass user to the form
+        return kwargs
+
     def form_valid(self, form):
-        response = super().form_valid(form)
+        if self.request.user.is_vendor:
+            form.instance.vendor = self.request.user.vendor
         messages.success(self.request, "Color created successfully.")
-        return response
+        return super().form_valid(form)
 
     def form_invalid(self, form):
         messages.error(self.request, "Failed to create color. Please check the form.")
@@ -402,10 +408,16 @@ class ColorAdminUpdateView(AdminOrMerchantRequiredMixin, UpdateView):
     success_url = reverse_lazy("color_list_admin")
     pk_url_kwarg = "id"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user  # Pass user to the form
+        return kwargs
+
     def form_valid(self, form):
-        response = super().form_valid(form)
+        if self.request.user.is_vendor and not form.instance.vendor:
+            form.instance.vendor = self.request.user.vendor
         messages.success(self.request, "Color updated successfully.")
-        return response
+        return super().form_valid(form)
 
     def form_invalid(self, form):
         messages.error(self.request, "Failed to update color. Please check the form.")

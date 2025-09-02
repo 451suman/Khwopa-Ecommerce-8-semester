@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import inlineformset_factory
 from products.models import Brand, Category, Color, Product, ProductImage, Size, Tag
+from vendor.models import Vendor
 
 
 class ProductForm(forms.ModelForm):
@@ -51,11 +52,25 @@ class AdminColorForm(forms.ModelForm):
         model = Color
         fields = "__all__"
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)  # Pop user from kwargs
+        super().__init__(*args, **kwargs)
+
+        if self.user:
+            if self.user.is_vendor:
+                # Hide vendor field and set it in the view
+                self.fields["vendor"].widget = forms.HiddenInput()
+                self.fields["vendor"].required = False
+            elif self.user.is_superuser or self.user.is_staff:
+                # Admin: Show all vendors
+                self.fields["vendor"].queryset = Vendor.objects.all()
+
 
 class AdminSizeForm(forms.ModelForm):
     class Meta:
         model = Size
         fields = "__all__"
+
 
 class AdminTagForm(forms.ModelForm):
     class Meta:

@@ -2,7 +2,6 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.views import View
 from .forms import AdminLoginForm  # your form import
-
 class AdminLoginView(View):
     def get(self, request):
         form = AdminLoginForm()
