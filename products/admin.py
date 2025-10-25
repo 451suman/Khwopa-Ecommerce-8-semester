@@ -101,6 +101,7 @@ class CartProductAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
         "id",
+        "order_number",
         "cart",
         "user",
         "ordered_by",

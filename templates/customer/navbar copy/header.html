@@ -1,0 +1,41 @@
+<div class="header-top hidden-xs">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <div class="header-top-left text-left">
+                    <ul>
+                        <li>
+                            <i class="sp-phone"></i>
+                            <span>+019 (111) 25184203</span>
+                        </li>
+                        <li>
+                            <i class="sp-email"></i>
+                            <span>KhwopaAuthenticate@gmail,com.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="header-top-right pull-right">
+                    <ul>
+                        <li><a href="#">Account <span><i class="sp-gear"></i></span></a>
+                            <ul class="submenu">
+                                <li><a href="#">My Account</a></li>
+                                <li><a href="#">Wishlist</a></li>
+                                <li><a href="#">Checkout</a></li>
+                                <li><a href="{% url 'customer_login' %}">Login</a></li>
+                                <li><a href="{% url 'customer_signup' %}">Signup</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="header-search">
+                        <form action="#">
+                            <input type="text" placeholder="Search..." />
+                            <button type="submit"><i class="sp-search"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

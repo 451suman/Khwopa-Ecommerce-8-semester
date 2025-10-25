@@ -1,0 +1,18 @@
+{% extends 'admin_dash/base.html' %} {% block content %}
+<strong><h1>{% block tabletitle %} {% endblock tabletitle %}</h1></strong>
+{% block other_info %}{% endblock other_info %}
+{% block table_form %}{% endblock table_form %}
+
+{% block table_status_form %}{% endblock table_status_form %}
+<table class="table">
+  <thead>
+    {% block tablehead %}{% endblock tablehead %}
+  </thead>
+  <tbody>
+    {% block tablebody %}{% endblock tablebody %}
+  </tbody>
+  
+</table>
+{% include 'admin_dash/pagination/pagination.html' %} {% endblock content %}
+
+

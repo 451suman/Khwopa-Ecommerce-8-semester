@@ -1,0 +1,44 @@
+{% extends 'admin_dash/table/table_base.html' %}
+{% block tabletitle %}Orders {{title}} {% endblock tabletitle %}
+ {% block other_info %}{% endblock other_info%}
+ {% block table_form %} {% endblock table_form %} {% block tablehead %}
+
+<tr>
+  <th scope="col">SN</th>
+  <th scope="col">Order Id</th>
+  <th scope="col">Customer Name</th>
+  <th scope="col">Customer phone</th>
+  <th scope="col">Status</th>
+  <th scope="col">Order Created Date</th>
+  <th scope="col">Total Amount</th>
+  <th scope="col">Action</th>
+</tr>
+{% endblock tablehead %} {% block tablebody %} {% for order in orders %}
+<tr>
+  <th scope="row">{{forloop.counter}}</th>
+  <td>{{order.order_number}}</td>
+  <td>{{order.user.full_name}}</td>
+  <td>{{order.user.phone}}</td>
+<td class="badge rounded-pill p-2 text-uppercase px-3
+  {% if order.order_status == 'Order Received' %}
+    bg-warning text-dark
+  {% elif order.order_status == 'Order Processing' %}
+    bg-primary text-white
+  {% elif order.order_status == 'On the way' %}
+    bg-info text-white
+  {% elif order.order_status == 'Order Completed' %}
+    bg-success text-white
+  {% elif order.order_status == 'Order Canceled' %}
+    bg-danger text-white
+  {% else %}
+    bg-secondary text-white
+  {% endif %}
+">
+  {{ order.order_status }}
+</td>
+
+  <td>{{order.created_at}}</td>
+  <td>{{order.total}}</td>
+  <td><a href="{% url 'admin_order_details' order.order_number %}">View</a></td>
+</tr>
+{% endfor %} {% endblock tablebody %}

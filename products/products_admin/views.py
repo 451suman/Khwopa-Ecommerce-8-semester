@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import (
     TemplateView,
     ListView,
@@ -8,11 +8,12 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
+from django.views import View
 
 from accounts import models
 from django.contrib.auth import get_user_model
 
-from products.models import Brand, Category, Color, Order, Product, Review, Size, Tag
+from products.models import ORDER_STATUS, Brand, CartProduct, Category, Color, Order, Product, ProductImage, Review, Size, Tag
 from products.products_admin.forms import ProductForm
 
 User = get_user_model()
@@ -593,3 +594,157 @@ class TagAdminDeleteView(AdminOrMerchantRequiredMixin, DeleteView):
     model = Tag
     success_url = reverse_lazy("tag_list_admin")
     pk_url_kwarg = "id"
+
+
+
+
+
+
+# order 
+class AdminOrderReceivedView(AdminOrMerchantRequiredMixin, ListView):
+    model = Order
+    template_name = "admin_dash/orders/order_list/order.html"
+    paginate_by = 50
+    context_object_name = "orders"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Received"
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.select_related("user").filter(order_status="Order Received").order_by("-id")
+        if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
+            queryset = queryset.filter(vendor=self.request.user.vendor)
+        return queryset
+class AdminOrderProcessingView(AdminOrMerchantRequiredMixin, ListView):
+    model = Order
+    template_name = "admin_dash/orders/order_list/order.html"
+    paginate_by = 50
+    context_object_name = "orders"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Processing"
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.select_related("user").filter(order_status="Order Processing").order_by("-id")
+        if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
+            queryset = queryset.filter(vendor=self.request.user.vendor)
+        return queryset
+class AdminOrderOnTheWayView(AdminOrMerchantRequiredMixin, ListView):
+    model = Order
+    template_name = "admin_dash/orders/order_list/order.html"
+    paginate_by = 50
+    context_object_name = "orders"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "On The Way"
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.select_related("user").filter(order_status="On the way").order_by("-id")
+        if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
+            queryset = queryset.filter(vendor=self.request.user.vendor)
+        return queryset
+class AdminOrderCompletedView(AdminOrMerchantRequiredMixin, ListView):
+    model = Order
+    template_name = "admin_dash/orders/order_list/order.html"
+    paginate_by = 50
+    context_object_name = "orders"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Completed"
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.select_related("user").filter(order_status="Order Completed").order_by("-id")
+        if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
+            queryset = queryset.filter(vendor=self.request.user.vendor)
+        return queryset
+class AdminOrderCanceledView(AdminOrMerchantRequiredMixin, ListView):
+    model = Order
+    template_name = "admin_dash/orders/order_list/order.html"
+    paginate_by = 50
+    context_object_name = "orders"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Canceled"
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.select_related("user").filter(order_status="Order Canceled").order_by("-id")
+        if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
+            queryset = queryset.filter(vendor=self.request.user.vendor)
+        return queryset
+
+class AdminOrderDetailView(DetailView):
+    model = Order
+    template_name = "admin_dash/orders/orders_details/orderdetails.html"
+    context_object_name = "order"
+
+    slug_field = "order_number"
+    slug_url_kwarg = "order_number"
+
+    def get_queryset(self):
+        cart_items_qs = (
+            CartProduct.objects
+            .select_related(
+                "product",
+                "product__brand",
+                "product__color",
+            )
+            .prefetch_related(
+                "product__sizes",
+                Prefetch(
+                    "product__product_images",
+                    queryset=ProductImage.objects.order_by("id"),
+                    to_attr="_images",  # in-memory list
+                )
+            )
+        )
+        return (
+            Order.objects
+            .select_related("user")
+            .prefetch_related(Prefetch("cart_products", queryset=cart_items_qs))
+        )
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["allstatus"] = ORDER_STATUS
+        return ctx
+
+
+
+
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.http import require_POST
+
+@require_POST
+def admin_change_order_status(request, pk: int):
+    order = get_object_or_404(Order, pk=pk)
+    new_status = request.POST.get("order_status", "").strip()
+
+    valid_choices = dict(ORDER_STATUS)  # e.g. [('PENDING','Pending'), ...]
+    if new_status in valid_choices:
+        if new_status != order.order_status:
+            order.order_status = new_status
+            order.save(update_fields=["order_status"])
+            messages.success(request, f"Order status updated to {valid_choices[new_status]}.")
+        else:
+            messages.info(request, "Order status is unchanged.")
+    else:
+        messages.error(request, "Invalid status selection.")
+
+    # go back to details page (or referrer if you prefer)
+    return redirect("admin_order_details", order_number=order.order_number)

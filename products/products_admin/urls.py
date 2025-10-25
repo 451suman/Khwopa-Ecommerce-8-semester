@@ -1,6 +1,12 @@
 from django.urls import path
 
 from products.products_admin.views import (
+    AdminOrderCanceledView,
+    AdminOrderCompletedView,
+    AdminOrderDetailView,
+    AdminOrderOnTheWayView,
+    AdminOrderProcessingView,
+    AdminOrderReceivedView,
     AdminProductDetails,
     BrandADminDeleteView,
     BrandAdminCreateView,
@@ -27,6 +33,7 @@ from products.products_admin.views import (
     TagAdminDeleteView,
     TagAdminListView,
     TagAdminUpdateView,
+    admin_change_order_status,
 )
 
 
@@ -107,4 +114,36 @@ urlpatterns = [
         TagAdminDeleteView.as_view(),
         name="tags_delete_admin",
     ),
+    # order
+    path(
+        "order/received/",
+        AdminOrderReceivedView.as_view(),
+        name="admin_order_received_list",
+    ),
+    path(
+        "order/proessing/",
+        AdminOrderProcessingView.as_view(),
+        name="admin_order_processing_list",
+    ),
+    path(
+        "order/on-the-way/",
+        AdminOrderOnTheWayView.as_view(),
+        name="admin_order_ontheway_list",
+    ),
+    path(
+        "order/completed/",
+        AdminOrderCompletedView.as_view(),
+        name="admin_order_complete_list",
+    ),
+    path(
+        "order/cancelled/",
+        AdminOrderCanceledView.as_view(),
+        name="admin_order_cancelled_list",
+    ),
+    path(
+        "order/details/<str:order_number>/",
+        AdminOrderDetailView.as_view(),
+        name="admin_order_details",
+    ),
+    path("admin-order-change-status-<int:pk>", admin_change_order_status, name="admin-order-change-status"),
 ]

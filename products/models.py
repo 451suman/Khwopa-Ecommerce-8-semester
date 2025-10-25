@@ -1,3 +1,4 @@
+from django.utils import timezone as dj_tz  
 from django.db import models
 from django.utils.text import slugify
 from accounts.models import CustomUser
@@ -207,18 +208,22 @@ class Order(models.Model):
         max_length=50, choices=ORDER_STATUS, default="Order Received"
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    order_number = models.CharField(max_length=20, unique=True, blank=True,null= True, editable=False)
 
     def __str__(self):
         return "Order: " + str(self.id)
     
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)  # Save first to have an ID for M2M
-
         # Get all CartProduct related to the cart
         related_cart_products = CartProduct.objects.filter(cart=self.cart)
-
         # Assign those CartProduct instances to the M2M field
         self.cart_products.set(related_cart_products)
+
+        if not self.order_number:
+            date_str = dj_tz.now().strftime("%Y%m%d")
+            self.order_number = f"ORD{date_str}{self.id:04d}"
+            super().save(update_fields=['order_number'])
         
 
 
