@@ -59,23 +59,22 @@
         </a>
         <ul>
           <li>
-            <a href="{% url 'admin_order_received_list' %}" class="bg-warning "><i class="bx bx-cart-alt"></i>Order Received</a>
+            <a href="{% url 'admin_order_received_list' %}" class="bg-warning "><i class="bx bx-cart-alt"></i>Order Received ({{Received}})</a>
           </li>
           <li>
-            <a href="{% url 'admin_order_processing_list' %}" class="bg-primary "><i class="bx bx-cart-alt"></i>Order Processing</a>
+            <a href="{% url 'admin_order_processing_list' %}" class="bg-primary "><i class="bx bx-cart-alt"></i>Order Processing ({{Processing}})</a>
           </li>
           <li>
-            <a href="{% url 'admin_order_ontheway_list' %}" class="bg-info "><i class="bx bx-cart-alt"></i>On the way</a>
+            <a href="{% url 'admin_order_ontheway_list' %}" class="bg-info "><i class="bx bx-cart-alt"></i>On the way ({{way}})</a>
           </li>
           <li>
-            <a href="{% url 'admin_order_complete_list' %}" class="bg-success "><i class="bx bx-cart-alt"></i>Order Completed</a>
+            <a href="{% url 'admin_order_complete_list' %}" class="bg-success "><i class="bx bx-cart-alt"></i>Order Completed ({{Completed}})</a>
           </li>
           <li>
-            <a href="{% url 'admin_order_cancelled_list' %}" class="bg-danger"><i class="bx bx-cart-alt"></i>Order Canceled</a>
+            <a href="{% url 'admin_order_cancelled_list' %}" class="bg-danger"><i class="bx bx-cart-alt"></i>Order Canceled ({{Canceled}})</a>
           </li>
         </li>
       </ul>
-    </li>
     <li>
       <a href="javascript:;" class="has-arrow">
         <div class="parent-icon">
