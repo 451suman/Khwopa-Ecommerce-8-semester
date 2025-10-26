@@ -1,0 +1,46 @@
+<!-- FILTER TOGGLE BUTTON -->
+<p class="d-inline-flex gap-2 mb-3">
+    <button class="btn btn-primary"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#vendorFilterCollapse"
+            aria-expanded="false"
+            aria-controls="vendorFilterCollapse">
+        <i class="bi bi-funnel"></i> Filters
+    </button>
+</p>
+<!-- COLLAPSIBLE FILTER CARD -->
+<div class="collapse" id="vendorFilterCollapse">
+    <div class="card shadow-sm border-primary">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-center">
+                <!-- Search field -->
+                <div class="col-md-8">
+                    <div class="form-floating">
+                        <input type="text"
+                               name="search"
+                               class="form-control"
+                               id="searchInput"
+                               placeholder="Search by name, email, phone, or PAN...">
+                        <label for="searchInput"></label>
+                    </div>
+                </div>
+                <!-- Filter dropdown -->
+                <div class="col-md-3">
+                    <div class="form-floating">
+                        <select class="form-select" name="is_authorized" id="filterSelect">
+                            <option value="">Any</option>
+                            <option value="true">True</option>
+                            <option value="false">False</option>
+                        </select>
+                        <label for="filterSelect">Is Authorized</label>
+                    </div>
+                </div>
+                <!-- Apply button -->
+                <div class="col-md-1 d-grid">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

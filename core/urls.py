@@ -18,6 +18,7 @@ urlpatterns = [
     # admin url
     path("dashboard/account/", include("accounts.accounts_admin.urls")),
     path("dashboard/product/", include("products.products_admin.urls")),
+    path("dashboard/vendor/", include("vendor.vendor_admin.urls")),
 
 ] + debug_toolbar_urls()
 if settings.DEBUG:

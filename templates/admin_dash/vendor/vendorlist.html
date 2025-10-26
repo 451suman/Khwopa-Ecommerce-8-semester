@@ -1,0 +1,171 @@
+{% extends 'admin_dash/table/table_base.html' %}
+<!-- ---------------------------table title ------------------- -->
+{% block tabletitle %}
+Vendor List
+{% endblock tabletitle %}
+
+<!-- ---------------------------table info ------------------- -->
+{% block other_info %}{% endblock other_info %}
+<!-- ---------------------------table form ------------------- -->
+{% block table_form %}
+{% include "admin_dash/vendor/vendor_filter_form.html" %}
+{% endblock table_form %}
+<!-- ---------------------------table head ------------------- -->
+{% block tablehead %}
+  <tr class="text-center">
+    <th scope="col">SN</th>
+    <th scope="col">Name</th>
+    <th scope="col">Email</th>
+    <th scope="col">Phone</th>
+    <th scope="col">Pan No</th>
+    <th scope="col">Registration No</th>
+    <th scope="col">Is Authorized</th>
+    <th scope="col">Logo</th>
+    <th scope="col">Action</th>
+  </tr>
+{% endblock tablehead %}
+<!-- ---------------------------table body ------------------- -->
+
+{% block tablebody %}
+  {% for vendor in vendors %}
+    <tr class="text-center">
+      <th scope="row">{{ forloop.counter }}</th>
+      <td>{{ vendor.vendor_name }}</td>
+      <td>{{ vendor.email }}</td>
+      <td>{{ vendor.phone }}</td>
+      <td>{{ vendor.pan_no }}</td>
+      <td>{{ vendor.reg_no }}</td>
+      <td>
+        {% if vendor.shop_image %}
+          <img src="{{ vendor.shop_image.url }}"
+               alt="{{ vendor.vendor_name }}"
+               height="50">
+        {% else %}
+          <span class="text-muted">No image</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if vendor.is_authorized %}
+          ✅
+        {% else %}
+          ❌
+        {% endif %}
+      </td>
+      <td>
+        <button type="button"
+                class="btn btn-info"
+                data-bs-toggle="modal"
+                data-bs-target="#vendorModal{{ vendor.pk }}">View</button>
+        <!-- Modal -->
+        <div class="modal fade "
+             id="vendorModal{{ vendor.pk }}"
+             data-bs-backdrop="static"
+             data-bs-keyboard="false"
+             tabindex="-1"
+             aria-labelledby="vendorModal{{ vendor.pk }}Label"
+             aria-hidden="true"
+             width="10000">
+          <div class="modal-dialog modal-dialog modal-lg text-start ">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5 text-capitalize fw-bold text-body-secondary"
+                    id="vendorModal{{ vendor.pk }}Label ">{{ vendor.vendor_name }} Details</h1>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <table class="table table-bordered align-middle">
+                  <tbody>
+                    <tr>
+                      <th scope="row" style="width: 25%;">Name</th>
+                      <td>{{ vendor.vendor_name }}</td>
+                    </tr>
+                    <tr>
+                      <th>Email</th>
+                      <td>{{ vendor.email }}</td>
+                    </tr>
+                    <tr>
+                      <th>Phone</th>
+                      <td>{{ vendor.phone }}</td>
+                    </tr>
+                    <tr>
+                      <th>Address</th>
+                      <td>{{ vendor.address }}</td>
+                    </tr>
+                    <tr>
+                      <th>PAN Number</th>
+                      <td>{{ vendor.pan_no }}</td>
+                    </tr>
+                    <tr>
+                      <th>Registration Number</th>
+                      <td>{{ vendor.reg_no }}</td>
+                    </tr>
+                    <tr>
+                      <th>Authorized</th>
+                      <td>
+                        {% if vendor.is_authorized %}
+                          <span class="badge bg-success">Yes</span>
+                        {% else %}
+                          <span class="badge bg-secondary">No</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Shop Image</th>
+                      <td>
+                        {% if vendor.shop_image %}
+                          <img src="{{ vendor.shop_image.url }}"
+                               alt="{{ vendor.vendor_name }}"
+                               class="img-fluid rounded border"
+                               style="max-width: 600px;
+                                      max-height: 600px">
+                        {% else %}
+                          <span class="text-muted">No image</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Citizenship (Front)</th>
+                      <td>
+                        {% if vendor.citizenship_front_image %}
+                          <img src="{{ vendor.citizenship_front_image.url }}"
+                               alt="Citizenship Front"
+                               class="img-thumbnail me-2"
+                               style="max-width: 600px;
+                                      max-height: 600px">
+                        {% else %}
+                          <span class="text-muted">Not Available</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Citizenship (Back)</th>
+                      <td>
+                        {% if vendor.citizenship_back_image %}
+                          <img src="{{ vendor.citizenship_back_image.url }}"
+                               alt="Citizenship Back"
+                               class="img-thumbnail me-2"
+                               style="max-width: 600px;
+                                      max-height: 600px">
+                        {% else %}
+                          <span class="text-muted">Not Available</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a href="" class="btn btn-primary">Edit</a>
+        <a href="" class="btn btn-danger">Delete</a>
+      </td>
+    </tr>
+  {% endfor %}
+{% endblock tablebody %}

@@ -1,18 +1,26 @@
 {% extends 'admin_dash/base.html' %} {% block content %}
+<!-- ---------------------------table title------------------- -->
 <strong><h1>{% block tabletitle %} {% endblock tabletitle %}</h1></strong>
+<!-- ---------------------------table info ------------------- -->
 {% block other_info %}{% endblock other_info %}
+<!-- ---------------------------table form ------------------- -->
 {% block table_form %}{% endblock table_form %}
 
+
+<!-- ---------------------------table status form -----------------body-- -->
 {% block table_status_form %}{% endblock table_status_form %}
 <table class="table">
   <thead>
+    <!-- ---------------------------table head ------------------- -->
     {% block tablehead %}{% endblock tablehead %}
   </thead>
   <tbody>
+    <!-- ---------------------------table head ------------------- -->
     {% block tablebody %}{% endblock tablebody %}
   </tbody>
   
 </table>
-{% include 'admin_dash/pagination/pagination.html' %} {% endblock content %}
+{% include 'admin_dash/pagination/pagination.html' %} <!-- # include pagination -->
+{% endblock content %}
 
 
