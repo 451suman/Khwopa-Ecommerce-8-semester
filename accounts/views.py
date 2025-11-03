@@ -2,7 +2,7 @@
 
 from django.shortcuts import render, redirect
 from django.views import View
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView, FormView
 from django.urls import reverse_lazy
 from accounts.models import CustomUser
@@ -63,3 +63,10 @@ class CustomerLoginView(FormView):
 
         login(self.request, user)
         return super().form_valid(form)
+
+
+
+class CustomerLogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect("home")

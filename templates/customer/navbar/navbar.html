@@ -41,7 +41,7 @@
       <!-- Right: Login / Logout Buttons -->
       <div style="display:flex; gap:10px;">
         {% if user.is_authenticated %}
-          <!-- <a href="{ % url 'logout' %}" style="background:#ff6600; color:#fff; padding:6px 12px; border-radius:4px; text-decoration:none;">Logout</a> -->
+          <a href="{% url 'customer_logout' %}" style="background:#ff6600; color:#fff; padding:6px 12px; border-radius:4px; text-decoration:none;">Logout</a>
         {% else %}
           <a href="{% url 'customer_login' %}" style="background:#ff6600; color:#fff; padding:6px 12px; border-radius:4px; text-decoration:none;">Login</a>
           <a href="{% url 'customer_signup' %}" style="background:#555; color:#fff; padding:6px 12px; border-radius:4px; text-decoration:none;">Signup</a>

@@ -1,7 +1,13 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.views import View
 from .forms import AdminLoginForm  # your form import
+
+
+class AdminLogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect("admin_login")
 
 
 class AdminLoginView(View):

@@ -633,7 +633,7 @@ class AdminOrderProcessingView(AdminOrMerchantRequiredMixin, ListView):
         queryset = super().get_queryset()
         queryset = queryset.select_related("user").filter(order_status="Order Processing").order_by("-id")
         if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
-            queryset = queryset.filter(vendor=self.request.user.vendor)
+            queryset = queryset.filter(vendor=self.request.user.vendor.id)
         return queryset
 class AdminOrderOnTheWayView(AdminOrMerchantRequiredMixin, ListView):
     model = Order

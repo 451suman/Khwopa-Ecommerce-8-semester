@@ -1,0 +1,29 @@
+{% extends 'admin_dash/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="card">
+    <div class="card-body">
+        {% if is_update %}
+            <h4>Update Vendor</h4>
+        {% else %}
+            <h4>Create Vendor</h4>
+        {% endif %}
+
+        <form action="{% url 'vendor_update_admin' pk=vendor.pk %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <h5>User Information</h5>
+            {{ user_form|crispy }}
+
+            <h5>Vendor Details</h5>
+            {{ vendor_form|crispy }}
+
+            <button type="submit" class="btn btn-primary">
+                {% if is_update %}Update{% else %}Save{% endif %}
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

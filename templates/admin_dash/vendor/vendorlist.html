@@ -27,6 +27,7 @@ Vendor List
 <!-- ---------------------------table body ------------------- -->
 
 {% block tablebody %}
+{% if vendors %}
   {% for vendor in vendors %}
     <tr class="text-center">
       <th scope="row">{{ forloop.counter }}</th>
@@ -34,7 +35,14 @@ Vendor List
       <td>{{ vendor.email }}</td>
       <td>{{ vendor.phone }}</td>
       <td>{{ vendor.pan_no }}</td>
-      <td>{{ vendor.reg_no }}</td>
+      <td>{{ vendor.reg_no }}</td> 
+      <td>
+        {% if vendor.is_authorized %}
+          ✅
+        {% else %}
+          ❌
+        {% endif %}
+      </td>
       <td>
         {% if vendor.shop_image %}
           <img src="{{ vendor.shop_image.url }}"
@@ -44,13 +52,7 @@ Vendor List
           <span class="text-muted">No image</span>
         {% endif %}
       </td>
-      <td>
-        {% if vendor.is_authorized %}
-          ✅
-        {% else %}
-          ❌
-        {% endif %}
-      </td>
+     
       <td>
         <button type="button"
                 class="btn btn-info"
@@ -78,6 +80,36 @@ Vendor List
               <div class="modal-body">
                 <table class="table table-bordered align-middle">
                   <tbody>
+                    <tr>
+                      <td colspan="2"><center><strong>User Details</strong></center></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" style="width: 25%;">Name</th>
+                      <td>{{ vendor.user.full_name }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" style="width: 25%;">Email</th>
+                      <td>{{ vendor.user.email }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" style="width: 25%;">Phone</th>
+                      <td>{{ vendor.user.phone }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" style="width: 25%;">Address</th>
+                      <td>{{ vendor.user.address }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" style="width: 25%;">Date Of Join</th>
+                      <td>{{ vendor.user.date_joined }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" style="width: 25%;">Is Active</th>
+                      <td>{% if vendor.user.is_active %} ✅ {% else %}❌</i>{% endif %} </td>
+                    </tr>
+                    <tr>
+                      <td colspan="2"><center><strong>Vendor Details</strong></center></td>
+                    </tr>
                     <tr>
                       <th scope="row" style="width: 25%;">Name</th>
                       <td>{{ vendor.vendor_name }}</td>
@@ -163,9 +195,43 @@ Vendor List
             </div>
           </div>
         </div>
-        <a href="" class="btn btn-primary">Edit</a>
-        <a href="" class="btn btn-danger">Delete</a>
+        <a href="{% url 'vendor_update_admin' pk=vendor.pk %}" class="btn btn-primary">Edit</a>
+        <!-- Button trigger modal -->
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{ vendor.id }}">
+  Delete
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop{{ vendor.id }}" data-bs-backdrop="static" data-bs-keyboard="false"
+     tabindex="-1" aria-labelledby="staticBackdrop{{ vendor.pk }}Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdrop{{ vendor.pk }}Label">Delete Confirmation</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'vendor_delete_admin' pk=vendor.pk %}" method="post">
+        <div class="modal-body">
+          {% csrf_token %}
+          <p>Are you sure you want to delete the vendor <strong>{{ vendor.vendor_name }}</strong>?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+          <button type="submit" class="btn btn-danger">Yes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
       </td>
     </tr>
   {% endfor %}
+{% else %}
+<tr>
+  <td colspan="9" class="text-center">
+   <h1> no vendor found</h1>
+  </td>
+</tr>
+{% endif %}
 {% endblock tablebody %}
