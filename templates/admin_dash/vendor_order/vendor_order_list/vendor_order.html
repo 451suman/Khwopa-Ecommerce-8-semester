@@ -1,0 +1,133 @@
+{% extends 'admin_dash/table/table_base.html' %}
+{% block tabletitle %}
+  Orders {{ title }}
+{% endblock tabletitle %}
+{% block tablehead %}
+  <tr>
+    <th scope="col">SN</th>
+    <th scope="col">Order Id</th>
+    <th scope="col">Product Name</th>
+    <th scope="col">Product Image</th>
+    <th scope="col">Status</th>
+    <th scope="col">Order Created Date</th>
+    <th scope="col">Total Amount</th>
+    <th scope="col">Action</th>
+  </tr>
+{% endblock tablehead %}
+{% block tablebody %}
+  {% for item in orders %}
+    {% with o=item.cart.order %}
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        {# Order number comes from Order model #}
+        <td>{{ o.order_number }}</td>
+        <td>{{ item.product.name }}</td>
+        <td>
+          {% if item.product.product_images.first %}
+            <img src="{{ item.product.product_images.first.image.url }}"
+                 alt="{{ item.product.name }}"
+                 class="img-fluid rounded"
+                 style="max-height:150px;
+                        object-fit:contain">
+          {% endif %}
+        </td>
+        {# Vendor-specific status comes from CartProduct.vendor_order_status #}
+        <td class="badge rounded-pill p-2 text-uppercase px-3 {% if item.vendor_order_status == 'Order Received' %} bg-warning text-dark {% elif item.vendor_order_status == 'Order Processing' %} bg-primary text-white {% elif item.vendor_order_status == 'On the way' %} bg-info text-white {% elif item.vendor_order_status == 'Order Completed' %} bg-success text-white {% elif item.vendor_order_status == 'Order Canceled' %} bg-danger text-white {% else %} bg-secondary text-white {% endif %}">
+          {{ item.vendor_order_status }}
+        </td>
+        {# Order created_at from Order #}
+        <td>{{ o.created_at }}</td>
+        {# If you want vendor-line total, use item.subtotal. If full order total, use o.total #}
+        <td>{{ item.subtotal }}</td>
+        <td>
+          <!-- Button trigger modal -->
+          <button type="button"
+                  class="btn btn-sm btn-primary"
+                  data-bs-toggle="modal"
+                  data-bs-target="#orderModal{{ item.id }}">View</button>
+          <!-- Modal -->
+          <div class="modal fade"
+               id="orderModal{{ item.id }}"
+               tabindex="-1"
+               aria-labelledby="orderModalLabel{{ item.id }}"
+               aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="orderModalLabel{{ item.id }}">Order {{ o.order_number }} — {{ item.product.name }}</h5>
+                  <button type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <p>
+                        <strong>Ordered By:</strong> {{ o.ordered_by }}
+                      </p>
+                      <p>
+                        <strong>Mobile:</strong> {{ o.mobile }}
+                      </p>
+                      <p>
+                        <strong>Email:</strong> {{ o.email }}
+                      </p>
+                      <p>
+                        <strong>Shipping Address:</strong> {{ o.shipping_address }}
+                      </p>
+                    </div>
+                    <div class="col-md-6">
+                      <p>
+                        <strong>Product:</strong> {{ item.product.name }}
+                      </p>
+                      <p>
+                        <strong>Rate:</strong> {{ item.rate }}
+                      </p>
+                      <p>
+                        <strong>Quantity:</strong> {{ item.quantity }}
+                      </p>
+                      <p>
+                        <strong>Subtotal:</strong> {{ item.subtotal }}
+                      </p>
+                      <p></p>
+                      <strong>Image:</strong>
+                      {% if item.product.product_images.first %}
+                        <img src="{{ item.product.product_images.first.image.url }}"
+                             alt="{{ item.product.name }}"
+                             class="img-fluid rounded"
+                             style="max-height:150px;
+                                    object-fit:contain">
+                      {% endif %}
+                    </p>
+                    <p>
+                      <strong>Update Status:</strong>
+                      {{item.id}}
+                      <form action="{% url 'vendor_cartproduct_status_update' item.id %}"
+                            method="post">
+                        {% csrf_token %}
+                        <select name="vendor_order_status" class="form-select mb-2">
+                          {% for key,label in status_choices %}
+                            {% if key != 'Order Canceled' %}
+                            <option value="{{ key }}"
+                                    {% if item.vendor_order_status == key %}selected{% endif %}>{{ label }}</option>
+                            {% endif %}
+                          {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-success">Update</button>
+                      </form>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                #}
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+  {% endwith %}
+{% endfor %}
+{% endblock tablebody %}

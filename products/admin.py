@@ -92,9 +92,10 @@ class CartAdmin(admin.ModelAdmin):
 
 @admin.register(CartProduct)
 class CartProductAdmin(admin.ModelAdmin):
-    list_display = ("id", "cart", "product", "rate", "quantity", "subtotal")
+    list_display = ("id", "cart", "product", "rate", "quantity", "subtotal","vendor_order_status")
     search_fields = ("product__name",)
     list_filter = ("cart",)
+    list_editable = ("vendor_order_status",)
 
 
 @admin.register(Order)

@@ -7,6 +7,7 @@ from common.utils import generate_secret_key
 
 User = get_user_model()
 
+
 class Vendor(TimeStampedModel):
     user = models.OneToOneField(User, on_delete=models.PROTECT)
     vendor_name = models.CharField(max_length=255)
@@ -44,7 +45,6 @@ class Vendor(TimeStampedModel):
             models.Index(fields=["pan_no"]),
         ]
 
-
     def save(self, *args, **kwargs):
         if not self.secret_key:
             self.secret_key = generate_secret_key()
@@ -63,3 +63,4 @@ class Vendor(TimeStampedModel):
             self.slug = slug
 
         super().save(*args, **kwargs)
+

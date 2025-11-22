@@ -5,7 +5,11 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, DeleteView, UpdateView, CreateView
 from vendor.models import Vendor
-from vendor.vendor_admin.forms import AdminVendorForm, VendorUserCreationForm, VendorUserEditForm
+from vendor.vendor_admin.forms import (
+    AdminVendorForm,
+    VendorUserCreationForm,
+    VendorUserEditForm,
+)
 
 
 # Ensure only admin users (staff or superuser) can access this view
@@ -14,6 +18,17 @@ class AdminRequiredMixin(object):
         if request.user.is_authenticated and (
             request.user.is_staff or request.user.is_superuser
         ):
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            messages.error(
+                request, "You must be an admin or staff to access this page."
+            )
+            return redirect("admin_login")  # Redirect to the admin login page
+
+
+class VendorRequiredMixin(object):
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and (request.user.is_vendor):
             return super().dispatch(request, *args, **kwargs)
         else:
             messages.error(
@@ -51,7 +66,6 @@ class AdminVendorListView(AdminRequiredMixin, ListView):
         return context
 
 
-
 class AdminVendorDeleteView(AdminRequiredMixin, DeleteView):
     model = Vendor
     context_object_name = "vendor"
@@ -63,8 +77,6 @@ class AdminVendorDeleteView(AdminRequiredMixin, DeleteView):
         messages.success(self.request, "Vendor deleted successfully")
 
         return super().get_success_url()
-    
-
 
 
 class AdminVendorCreateView(AdminRequiredMixin, View):
@@ -74,10 +86,11 @@ class AdminVendorCreateView(AdminRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         user_form = VendorUserCreationForm()
         vendor_form = AdminVendorForm()
-        return render(request, self.template_name, {
-            "user_form": user_form,
-            "vendor_form": vendor_form
-        })
+        return render(
+            request,
+            self.template_name,
+            {"user_form": user_form, "vendor_form": vendor_form},
+        )
 
     def post(self, request, *args, **kwargs):
         user_form = VendorUserCreationForm(request.POST)
@@ -99,15 +112,11 @@ class AdminVendorCreateView(AdminRequiredMixin, View):
             return redirect(self.success_url)
 
         messages.error(request, "Please correct the errors below.")
-        return render(request, self.template_name, {
-            
-            "user_form": user_form,
-            "vendor_form": vendor_form
-        })
-
-
-
-
+        return render(
+            request,
+            self.template_name,
+            {"user_form": user_form, "vendor_form": vendor_form},
+        )
 
 
 class AdminVendorUpdateView(AdminRequiredMixin, View):
@@ -121,11 +130,15 @@ class AdminVendorUpdateView(AdminRequiredMixin, View):
         user_form = VendorUserEditForm(instance=user)
         vendor_form = AdminVendorForm(instance=vendor)
 
-        return render(request, self.template_name, {
-            "user_form": user_form,
-            "vendor_form": vendor_form,
-            "is_update": True,
-        })
+        return render(
+            request,
+            self.template_name,
+            {
+                "user_form": user_form,
+                "vendor_form": vendor_form,
+                "is_update": True,
+            },
+        )
 
     def post(self, request, pk, *args, **kwargs):
         vendor = get_object_or_404(Vendor, pk=pk)
@@ -142,8 +155,12 @@ class AdminVendorUpdateView(AdminRequiredMixin, View):
             return redirect(self.success_url)
 
         messages.error(request, "Please correct the errors below.")
-        return render(request, self.template_name, {
-            "user_form": user_form,
-            "vendor_form": vendor_form,
-            "is_update": True,
-        })
+        return render(
+            request,
+            self.template_name,
+            {
+                "user_form": user_form,
+                "vendor_form": vendor_form,
+                "is_update": True,
+            },
+        )

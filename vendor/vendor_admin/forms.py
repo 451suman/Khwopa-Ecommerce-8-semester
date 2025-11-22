@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from accounts.models import CustomUser
+from products.models import CartProduct
 from vendor.models import Vendor
 
 
@@ -32,3 +33,16 @@ class VendorUserEditForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ("email", "full_name", "phone", "address", "is_active")
+        
+# ----------------------------------------------------------
+
+
+class VendorOrderStatusForm(forms.ModelForm):
+    class Meta:
+        model = CartProduct
+        fields = ["vendor_order_status"]
+        widgets = {
+            "vendor_order_status": forms.Select(attrs={
+                "class": "form-select"
+            })
+        }

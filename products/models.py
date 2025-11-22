@@ -63,7 +63,7 @@ class Tag(TimeStampedModel):
 
 
 class Product(TimeStampedModel):
-    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True)
+    vendor = models.ForeignKey("vendor.Vendor", on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
     description = models.TextField()
@@ -171,15 +171,30 @@ class Cart(models.Model):
         return f"Cart:{ str(self.id)}, User: {self.user.email}"
 
 
+VENDOR_ORDER_STATUS = (
+    ("Order Received", "Order Received"),
+    ("Order Processing", "Order Processing"),
+    ("On the way", "On the way"),
+    ("Order Completed", "Order Completed"),
+    ("Order Canceled", "Order Canceled"),
+)
+
 class CartProduct(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True , blank=True)  # snapshot
     rate = models.PositiveIntegerField()
     quantity = models.PositiveIntegerField()
     subtotal = models.PositiveIntegerField()
+    vendor_order_status = models.CharField(
+        max_length=50, choices=VENDOR_ORDER_STATUS, default="Order Received"
+    )
 
-    def __str__(self):
-        return self.product.name
+    def save(self, *args, **kwargs):
+        if not self.vendor_id:
+            self.vendor = self.product.vendor
+        self.subtotal = self.rate * self.quantity
+        super().save(*args, **kwargs)
 
 
 ORDER_STATUS = (

@@ -393,6 +393,19 @@ class CheckoutView(LoginRequiredMixin, CreateView):
         form.instance.discount = 0
         form.instance.total = cart_obj.total
         form.instance.order_status = "Order Received"
+        order = form.save()
+
+        # Create vendor order items
+        # cart_items = cart_obj.cartproduct_set.all()
+        # for item in cart_items:
+        #     vendor_items = VendorOrderItem.objects.create(
+        #         order=form.instance,
+        #         vendor=item.product.vendor,
+        #         product=item.product,
+        #         rate=item.rate,
+        #         quantity=item.quantity,
+        #         subtotal=item.subtotal,
+        #     )
 
         # Clear cart_id from session
         del self.request.session["cart_id"]
