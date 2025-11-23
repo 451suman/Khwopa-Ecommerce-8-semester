@@ -74,6 +74,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "products.products_admin.order_status_count.orderstatuscountFunc",
+                "products.products_admin.order_status_count.VendororderstatuscountFunc",
             ],
         },
     },

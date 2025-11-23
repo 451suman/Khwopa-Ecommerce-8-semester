@@ -96,16 +96,18 @@
           </a>
           <ul>
             <li>
-              <a href="{% url 'vendor_order_list_admin' %}" class="bg-warning "><i class="bx bx-cart-alt"></i>Order Received ()</a>
+              <a href="{% url 'vendor_order_list_admin' %}" class="bg-warning "><i class="bx bx-cart-alt"></i>Order Received ({{ Vendor_Order_Received }})</a>
             </li>
             <li>
-              <a href="{% url 'vendor_order_list_admin_processing' %}" class="bg-primary "><i class="bx bx-cart-alt"></i>Order Processing ({{ Processing }})</a>
+              <a href="{% url 'vendor_order_list_admin_processing' %}"
+                 class="bg-primary "><i class="bx bx-cart-alt"></i>Order Processing ({{ Vendor_Order_Processing }})</a>
             </li>
             <li>
-              <a href="{% url 'vendor_order_list_admin_way' %}" class="bg-info "><i class="bx bx-cart-alt"></i>On the way ({{ way }})</a>
+              <a href="{% url 'vendor_order_list_admin_way' %}" class="bg-info "><i class="bx bx-cart-alt"></i>On the way ({{ Vendor_Order_way }})</a>
             </li>
             <li>
-              <a href="{% url 'vendor_order_list_admin_completed' %}" class="bg-success "><i class="bx bx-cart-alt"></i>Order Completed ({{ Completed }})</a>
+              <a href="{% url 'vendor_order_list_admin_completed' %}"
+                 class="bg-success "><i class="bx bx-cart-alt"></i>Order Completed ({{ Vendor_Order_Completed }})</a>
             </li>
           </ul>
         </li>
