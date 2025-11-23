@@ -11,7 +11,7 @@ from vendor.models import Vendor
 from .models import Brand, Cart, CartProduct, Order, Product, Category, Review
 from django.contrib import messages
 
-
+from django.db.models import Q
 class EcomMixin(object):
     def dispatch(self, request, *args, **kwargs):
         cart_id = request.session.get("cart_id")
@@ -122,6 +122,7 @@ class ProductListView(ListView):
 
         # Get the 'sort' parameter from the GET request
         sort = self.request.GET.get("sort")
+        search = self.request.GET.get("search")
 
         # If the user wants to sort low-to-high or high-to-low, we apply sorting in Python
         if sort == "low_to_high":
@@ -145,6 +146,9 @@ class ProductListView(ListView):
         # Default sorting by 'created_at' in descending order
         else:
             qs = qs.order_by("-created_at")
+
+        if search:
+            qs = qs.filter(Q(name__icontains=search) | Q(description__icontains=search))
 
         return qs
 
