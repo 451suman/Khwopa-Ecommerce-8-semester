@@ -189,11 +189,10 @@ class ProductDetailView(TemplateView):
             ).prefetch_related("tag", "sizes", "product_images"),
             slug=slug,
         )
+
         context["product"] = product
 
-        context["related_products"] = product.category.products.exclude(
-            id=product.id
-        ).order_by("-created_at")
+        context["related_products"] = product.get_similar_products()
 
         # Prefetch reviews with user info to avoid query in template
         reviews_qs = Review.objects.filter(product=product).select_related("user")
@@ -462,8 +461,10 @@ class CustomerOrderDetailView(LoginRequiredMixin, DetailView):
     template_name = "customer/order/orderdetail/customerorderdetail.html"
     context_object_name = "ord_obj"
 
+
 from django.shortcuts import get_object_or_404
 from django.http import Http404
+
 
 class CategoryProductListView(EcomMixin, ListView):
     model = Product
@@ -473,7 +474,7 @@ class CategoryProductListView(EcomMixin, ListView):
 
     def get_queryset(self):
         category = get_object_or_404(Category, slug=self.kwargs["slug"])
-        
+
         return Product.objects.filter(category=category, is_active=True)
 
     def get_context_data(self, **kwargs):
@@ -484,7 +485,6 @@ class CategoryProductListView(EcomMixin, ListView):
         context["brands"] = brands_list_func(self.request)
 
         return context
-
 
 
 from django.views.generic import ListView

@@ -121,6 +121,17 @@ class Product(TimeStampedModel):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
+    def get_similar_products(self, limit=10):
+        queryset = Product.objects.filter(
+            category=self.category
+        ).exclude(id=self.id)
+
+        queryset = queryset.filter(
+            brand=self.brand
+        ) | queryset.filter(tag__in=self.tag.all())
+
+        return queryset.distinct()[:limit]
+
     # def get_price_for(self, color=None, size=None):
     #     try:
     #         variant = ProductVariant.objects.get(product=self, color=color, size=size)

@@ -1,3 +1,4 @@
+{% load static %}
 <!-- SIMPLE FULL HEADER WITH LOGIN/LOGOUT START -->
 <header style="font-family:sans-serif;">
 
@@ -12,10 +13,7 @@
       </div>
       
       <!-- Right: Search -->
-      <form action="#" style="display:flex; background:#fff; border-radius:4px; overflow:hidden;">
-        <input type="text" placeholder="Search..." style="border:none; padding:5px 10px; outline:none;">
-        <button type="submit" style="border:none; background:#ff6600; color:#fff; padding:5px 10px; cursor:pointer;">🔍</button>
-      </form>
+      {% include 'customer/navbar/search.html' %}
     </div>
   </div>
 
@@ -25,7 +23,7 @@
       
       <!-- Left: Logo -->
       <a href="{% url 'home' %}" style="text-decoration:none; color:#fff; font-size:20px; font-weight:bold;">
-        <img src="img/logo.png" alt="Logo" style="height:40px; vertical-align:middle;"> MyShop
+        <img src="{% static 'customer/images/logo.png' %}" alt="Logo" style="height:40px; vertical-align:middle;"> 
       </a>
 
       <!-- Center: Navigation Links -->
