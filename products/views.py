@@ -104,6 +104,12 @@ def brands_list_func(request):
     brands = Brand.objects.all()
     return brands
 
+
+from django.shortcuts import render
+from django.views.generic import ListView
+from .models import Product
+
+
 class ProductListView(ListView):
     model = Product
     template_name = "customer/product/product_list.html"
@@ -111,14 +117,32 @@ class ProductListView(ListView):
     paginate_by = 9
 
     def get_queryset(self):
+        # Fetch products with prefetch_related to optimize image loading
         qs = Product.objects.prefetch_related("product_images")
 
+        # Get the 'sort' parameter from the GET request
         sort = self.request.GET.get("sort")
 
+        # If the user wants to sort low-to-high or high-to-low, we apply sorting in Python
         if sort == "low_to_high":
-            qs = qs.order_by("current_price")
+            # Bubble Sort to sort by 'current_price' in ascending order
+            products = list(qs)  # Convert queryset to list to apply sorting
+            for i in range(len(products) - 1):
+                for j in range(len(products) - 1 - i):
+                    if products[j].current_price > products[j + 1].current_price:
+                        products[j], products[j + 1] = products[j + 1], products[j]
+            qs = products
+
         elif sort == "high_to_low":
-            qs = qs.order_by("-current_price")
+            # Bubble Sort to sort by 'current_price' in descending order
+            products = list(qs)  # Convert queryset to list to apply sorting
+            for i in range(len(products) - 1):
+                for j in range(len(products) - 1 - i):
+                    if products[j].current_price < products[j + 1].current_price:
+                        products[j], products[j + 1] = products[j + 1], products[j]
+            qs = products
+
+        # Default sorting by 'created_at' in descending order
         else:
             qs = qs.order_by("-created_at")
 
@@ -438,23 +462,29 @@ class CustomerOrderDetailView(LoginRequiredMixin, DetailView):
     template_name = "customer/order/orderdetail/customerorderdetail.html"
     context_object_name = "ord_obj"
 
+from django.shortcuts import get_object_or_404
+from django.http import Http404
 
 class CategoryProductListView(EcomMixin, ListView):
     model = Product
     template_name = "customer/product/product_list.html"
     context_object_name = "products"
-    paginate_by = 1
+    paginate_by = 10  # You can change this to the desired number of products per page
 
     def get_queryset(self):
-        return Product.objects.filter(category__slug=self.kwargs["slug"])
+        category = get_object_or_404(Category, slug=self.kwargs["slug"])
+        
+        return Product.objects.filter(category=category, is_active=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         context["categories"] = category_list_func(self.request)
         context["vendors"] = vendor_list_func(self.request)
         context["brands"] = brands_list_func(self.request)
 
         return context
+
 
 
 from django.views.generic import ListView
