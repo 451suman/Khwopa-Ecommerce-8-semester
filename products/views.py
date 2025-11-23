@@ -104,7 +104,6 @@ def brands_list_func(request):
     brands = Brand.objects.all()
     return brands
 
-
 class ProductListView(ListView):
     model = Product
     template_name = "customer/product/product_list.html"
@@ -112,14 +111,21 @@ class ProductListView(ListView):
     paginate_by = 9
 
     def get_queryset(self):
-        # Prefetch related product_images and order by created_at descending
-        return Product.objects.prefetch_related("product_images").order_by(
-            "-created_at"
-        )
+        qs = Product.objects.prefetch_related("product_images")
+
+        sort = self.request.GET.get("sort")
+
+        if sort == "low_to_high":
+            qs = qs.order_by("current_price")
+        elif sort == "high_to_low":
+            qs = qs.order_by("-current_price")
+        else:
+            qs = qs.order_by("-created_at")
+
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Add categories to the context
         context["categories"] = category_list_func(self.request)
         context["vendors"] = vendor_list_func(self.request)
         context["brands"] = brands_list_func(self.request)
