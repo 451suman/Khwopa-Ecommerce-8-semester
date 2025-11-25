@@ -748,3 +748,6 @@ def admin_change_order_status(request, pk: int):
 
     # go back to details page (or referrer if you prefer)
     return redirect("admin_order_details", order_number=order.order_number)
+
+
+

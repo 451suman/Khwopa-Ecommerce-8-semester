@@ -218,7 +218,7 @@ class ProductDetailView(TemplateView):
             average_rating = total_rating / count
         else:
             average_rating = 0
-        context["average_rating"] = round(average_rating, 2)
+        context["average_rating"] = round(average_rating)
 
         can_review = False
         if user.is_authenticated:
