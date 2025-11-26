@@ -24,7 +24,9 @@ class CustomerSignUpView(View):
     def post(self, request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user =form.save()
+            user.is_verified = True
+            user.save()
             return redirect("customer_login")
         return render(request, "customer/accounts/signup.html", {"form": form})
 

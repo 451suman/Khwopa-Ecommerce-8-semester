@@ -220,21 +220,21 @@ class ProductDetailView(TemplateView):
             average_rating = 0
         context["average_rating"] = round(average_rating)
 
+        # Check if user can review
         can_review = False
         if user.is_authenticated:
-            # Check if user has completed an order with the product
             has_completed_order = Order.objects.filter(
                 user=user,
                 order_status="Order Completed",
-                cart__cartproduct__product=product,
+                cart_products__product=product,
             ).exists()
 
-            # Check if user already reviewed the product
             has_reviewed = reviews_qs.filter(user=user).exists()
 
-            can_review = has_completed_order and not has_reviewed
+            can_review = has_completed_order and not has_reviewed 
 
         context["can_review"] = can_review
+        context["has_reviewed"] = has_reviewed
         return context
 
 
@@ -568,3 +568,47 @@ class BrandProductListView(ListView):
         context["brands"] = brands_list_func(self.request)
 
         return context
+
+
+
+
+
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib import messages
+from django.views import View
+
+class AddReviewView(View):
+    def post(self, request, slug):
+        if not request.user.is_authenticated:
+            messages.error(request, "You must be logged in to submit a review.")
+            return redirect("customer_login")
+
+        product = get_object_or_404(Product, slug=slug)
+
+        # Double check: user must have purchased & order completed
+        has_completed_order = Order.objects.filter(
+            user=request.user,
+            order_status="Order Completed",
+            cart_products__product=product,
+        ).exists()
+
+        if not has_completed_order:
+            messages.error(request, "You cannot review without purchasing this product.")
+            return redirect("product_detail", slug=slug)
+
+        rating = request.POST.get("rating")
+        comment = request.POST.get("comment", "")
+
+        if Review.objects.filter(product=product, user=request.user).exists():
+            messages.info(request, "You already reviewed this product.")
+            return redirect("product_detail", slug=slug)
+
+        Review.objects.create(
+            user=request.user,
+            product=product,
+            rating=rating,
+            comment=comment,
+        )
+
+        messages.success(request, "Your review has been submitted successfully!")
+        return redirect("product_detail", slug=slug)

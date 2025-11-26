@@ -1,6 +1,7 @@
 from django.urls import include, path
 
 from products.views import (
+    AddReviewView,
     BrandProductListView,
     CategoryProductListView,
     CheckoutView,
@@ -50,4 +51,5 @@ urlpatterns = [
     # order
     path("order-list/", OrderListView.as_view(), name="order-list"),
     path("order/<int:pk>/", CustomerOrderDetailView.as_view(), name="order_detail"),
+    path("product/<slug:slug>/review/", AddReviewView.as_view(), name="add_review"),
 ]

@@ -1,50 +1,60 @@
 {% if can_review %}
-
 <div class="col-md-7 col-sm-12">
     <div class="panel panel-default">
         <div class="panel-heading"><strong>Add a Review</strong></div>
         <div class="panel-body">
-            <form action="#">
+            <form method="POST" action="{% url 'add_review' product.slug %}">
+                {% csrf_token %}
+
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Your name" name="firstname" />
-                </div>
-                <div class="form-group">
-                    <input type="email" class="form-control" placeholder="Your email" name="email" />
+                    <input type="text" class="form-control" value="{{ request.user.full_name }}" readonly />
                 </div>
 
+                <div class="form-group">
+                    <input type="hidden" name="email" value="{{ request.user.email }}" />
+                </div>
+
+                <!-- Rating Selection -->
                 <div class="form-group">
                     <label>Your Rating</label>
-                    <div>
-                        <a href="#"><i class="sp-star"></i></a>
-                        <a href="#"><i class="sp-star"></i></a>
-                        <a href="#"><i class="sp-star"></i></a>
-                        <a href="#"><i class="sp-star"></i></a>
-                        <a href="#"><i class="sp-star"></i></a>
-                    </div>
+                    <select class="form-control" name="rating" required>
+                        <option value="">Select Rating</option>
+                        <option value="1">⭐ 1</option>
+                        <option value="2">⭐⭐ 2</option>
+                        <option value="3">⭐⭐⭐ 3</option>
+                        <option value="4">⭐⭐⭐⭐ 4</option>
+                        <option value="5">⭐⭐⭐⭐⭐ 5</option>
+                    </select>
                 </div>
 
+                <!-- Comment -->
                 <div class="form-group">
-                    <textarea class="form-control" rows="4" placeholder="Your review"></textarea>
+                    <textarea class="form-control" rows="4" name="comment" placeholder="Your review"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">
-                    Submit Review
-                </button>
+
+                <button type="submit" class="btn btn-primary">Submit Review</button>
             </form>
         </div>
     </div>
 </div>
+{% elif has_reviewed == False %}
+<div class="col-md-7 col-sm-12">
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>But the product and review.</strong></div>
+    </div>
 </div>
+
 {% else %}
 <div class="col-md-7 col-sm-12">
     <div class="panel panel-default">
         {% if user.is_authenticated %}
         <div class="panel-heading"><strong>You Have Already Reviewed This Product.</strong></div>
         {% else %}
-        <div class="panel-heading"><strong>Login To Review. 👉 <a href="{% url 'customer_login' %}">Click
-                    Here</a></strong>
+        <div class="panel-heading"><strong>
+                Login To Review 👉 <a href="{% url 'customer_login' %}">Click Here</a>
+            </strong>
         </div>
         {% endif %}
     </div>
 </div>
-
 {% endif %}
