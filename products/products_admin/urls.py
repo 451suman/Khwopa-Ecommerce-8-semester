@@ -4,6 +4,7 @@ from products.products_admin.views import (
     AdminOrderCanceledView,
     AdminOrderCompletedView,
     AdminOrderDetailView,
+    AdminOrderFilteredView,
     AdminOrderOnTheWayView,
     AdminOrderProcessingView,
     AdminOrderReceivedView,
@@ -115,6 +116,12 @@ urlpatterns = [
         name="tags_delete_admin",
     ),
     # order
+    
+    path(
+        "order/filtered/",
+        AdminOrderFilteredView.as_view(),
+        name="admin_order_filtered_list",
+    ),
     path(
         "order/received/",
         AdminOrderReceivedView.as_view(),

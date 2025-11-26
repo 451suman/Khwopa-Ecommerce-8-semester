@@ -1,7 +1,10 @@
 {% extends 'admin_dash/table/table_base.html' %}
 {% block tabletitle %}Orders {{title}} {% endblock tabletitle %}
  {% block other_info %}{% endblock other_info%}
- {% block table_form %} {% endblock table_form %} {% block tablehead %}
+ {% block table_form %} 
+ {% include "admin_dash/orders/order_list/order_filter_form.html" %}
+ {% endblock table_form %}
+  {% block tablehead %}
 
 <tr>
   <th scope="col">SN</th>

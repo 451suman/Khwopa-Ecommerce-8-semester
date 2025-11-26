@@ -1,3 +1,4 @@
+from multiprocessing import Value
 from django.core.cache import cache
 from django.views.generic import ListView, DetailView, TemplateView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -10,7 +11,7 @@ from products.forms import CheckoutForm
 from vendor.models import Vendor
 from .models import Brand, Cart, CartProduct, Order, Product, Category, Review
 from django.contrib import messages
-
+from django.db.models.functions import Coalesce
 from django.db.models import Q
 class EcomMixin(object):
     def dispatch(self, request, *args, **kwargs):
@@ -65,13 +66,8 @@ class HomeView(ListView):
 
         context["categories"] = categories
 
-        top_rated = (
-            Product.objects.prefetch_related("product_images")
-            .annotate(average_rating=Avg("review__rating"))
-            .order_by("-average_rating")[:9]
-        )
 
-        context["top_rated"] = top_rated
+
 
         return context
 

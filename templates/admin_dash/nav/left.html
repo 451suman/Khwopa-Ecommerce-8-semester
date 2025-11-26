@@ -1,137 +1,96 @@
-<div class="wrapper">
-  <!--sidebar wrapper -->
-  <div class="sidebar-wrapper" data-simplebar="true">
-    <div class="sidebar-header">
-      <div>
-        <!-- <img src="assets/images/logo-icon.png" class="logo-icon" alt="logo icon" /> -->
-      </div>
-      <div>
-        <h4 class="logo-text">Khwopa</h4>
-      </div>
-      <div class="toggle-icon ms-auto">
-        <i class="bx bx-first-page"></i>
-      </div>
+<div class="sidebar-wrapper p-3" style="width:260px; background:#fff; border-right:1px solid #eee;" data-simplebar="true">
+
+    <!-- Logo -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h4 class="fw-bold m-0">Khwopa</h4>
+        <i class="bx bx-first-page fs-4 cursor-pointer"></i>
     </div>
-    <!--navigation-->
-    <ul class="metismenu" id="menu">
-      <li>
-        <a href="{% url 'dashboard_admin' %}" class="">
-          <div class="parent-icon">
-            <i class="bx bx-home"></i>
-          </div>
-          <div class="menu-title">Dashboard</div>
-        </a>
-      </li>
-      <li>
-        <a href="javascript:;" class="has-arrow">
-          <div class="parent-icon">
-            <i class="bx bx-package"></i>
-          </div>
-          <div class="menu-title">eCommerce</div>
-        </a>
-        <ul>
-          <li>
-            <a href="{% url 'product_list_admin' %}"><i class="bx bx-right-arrow-alt"></i>Products</a>
-          </li>
-          <li>
-            <a href="{% url 'category_list_admin' %}"><i class="bx bx-right-arrow-alt"></i>Category</a>
-          </li>
-          <li>
-            <a href="{% url 'brand_list_admin' %}"><i class="bx bx-right-arrow-alt"></i>Brands</a>
-          </li>
-          <li>
-            <a href="{% url 'color_list_admin' %}"><i class="bx bx-right-arrow-alt"></i>Color</a>
-          </li>
-          <li>
-            <a href="{% url 'size_list_admin' %}"><i class="bx bx-right-arrow-alt"></i>Size</a>
-          </li>
-          <li>
-            <a href="{% url 'tag_list_admin' %}"><i class="bx bx-right-arrow-alt"></i>Tags</a>
-          </li>
-        </ul>
-      </li>
-      {% if user.is_superuser %}
-        <li>
-          <a href="javascript:;" class="has-arrow">
-            <div class="parent-icon">
-              <i class="bx bx-cart-alt"></i>
-            </div>
-            <div class="menu-title">Orders</div>
-          </a>
-          <ul>
-            <li>
-              <a href="{% url 'admin_order_received_list' %}" class="bg-warning "><i class="bx bx-cart-alt"></i>Order Received ({{ Received }})</a>
-            </li>
-            <li>
-              <a href="{% url 'admin_order_processing_list' %}" class="bg-primary "><i class="bx bx-cart-alt"></i>Order Processing ({{ Processing }})</a>
-            </li>
-            <li>
-              <a href="{% url 'admin_order_ontheway_list' %}" class="bg-info "><i class="bx bx-cart-alt"></i>On the way ({{ way }})</a>
-            </li>
-            <li>
-              <a href="{% url 'admin_order_complete_list' %}" class="bg-success "><i class="bx bx-cart-alt"></i>Order Completed ({{ Completed }})</a>
-            </li>
-            <li>
-              <a href="{% url 'admin_order_cancelled_list' %}" class="bg-danger"><i class="bx bx-cart-alt"></i>Order Canceled ({{ Canceled }})</a>
-            </li>
-          </ul>
+
+    <ul class="list-unstyled">
+
+        <!-- Dashboard -->
+        <li class="mb-2">
+            <a href="{% url 'dashboard_admin' %}" class="d-flex align-items-center gap-2 text-dark">
+                <i class="bx bx-home"></i>
+                <span>Dashboard</span>
+            </a>
         </li>
-        <li>
-          <a href="{% url 'user_list_admin' %}" class="">
-            <div class="parent-icon">
-              <i class='bx  bx-user-circle'></i>
-            </div>
-            <div class="menu-title">Users</div>
-          </a>
+
+        <!-- Ecommerce DROPDOWN -->
+        <li class="mb-2">
+            <a class="d-flex justify-content-between align-items-center text-dark"
+               data-bs-toggle="collapse" href="#ecommerceMenu" role="button">
+                <span><i class="bx bx-package me-2"></i> E-commerce</span>
+                <i class="bx bx-chevron-down"></i>
+            </a>
+
+            <ul class="collapse ms-4 mt-2" id="ecommerceMenu">
+                <li><a href="{% url 'product_list_admin' %}" class="text-dark d-block py-1">Products</a></li>
+                <li><a href="{% url 'category_list_admin' %}" class="text-dark d-block py-1">Category</a></li>
+                <li><a href="{% url 'brand_list_admin' %}" class="text-dark d-block py-1">Brands</a></li>
+                <li><a href="{% url 'color_list_admin' %}" class="text-dark d-block py-1">Color</a></li>
+                <li><a href="{% url 'size_list_admin' %}" class="text-dark d-block py-1">Size</a></li>
+                <li><a href="{% url 'tag_list_admin' %}" class="text-dark d-block py-1">Tags</a></li>
+            </ul>
         </li>
-        <li>
-          <a href="{% url 'vendor_list_admin' %}" class="">
-            <div class="parent-icon">
-              <i class='bx  bx-user-circle'></i>
-            </div>
-            <div class="menu-title">Vendor</div>
-          </a>
+
+        {% if user.is_superuser %}
+        <!-- Orders DROPDOWN -->
+        <li class="mb-2">
+            <a class="d-flex justify-content-between align-items-center text-dark"
+               data-bs-toggle="collapse" href="#ordersMenu" role="button">
+                <span><i class="bx bx-cart-alt me-2"></i> Orders</span>
+                <i class="bx bx-chevron-down"></i>
+            </a>
+
+            <ul class="collapse ms-4 mt-2" id="ordersMenu">
+                <li><a href="{% url 'admin_order_received_list' %}" class="d-block py-1">Received ({{ Received }})</a></li>
+                <li><a href="{% url 'admin_order_processing_list' %}" class="d-block py-1">Processing ({{ Processing }})</a></li>
+                <li><a href="{% url 'admin_order_ontheway_list' %}" class="d-block py-1">On the Way ({{ way }})</a></li>
+                <li><a href="{% url 'admin_order_complete_list' %}" class="d-block py-1">Completed ({{ Completed }})</a></li>
+                <li><a href="{% url 'admin_order_cancelled_list' %}" class="d-block py-1">Canceled ({{ Canceled }})</a></li>
+            </ul>
         </li>
-      {% endif %}
-      <!-- ---------------------------------------------------------------------------------- -->
-      {% if user.is_vendor %}
-        <li>
-          <a href="javascript:;" class="has-arrow">
-            <div class="parent-icon">
-              <i class="bx bx-cart-alt"></i>
-            </div>
-            <div class="menu-title">Vendor Orders</div>
-          </a>
-          <ul>
-            <li>
-              <a href="{% url 'vendor_order_list_admin' %}" class="bg-warning "><i class="bx bx-cart-alt"></i>Order Received ({{ Vendor_Order_Received }})</a>
-            </li>
-            <li>
-              <a href="{% url 'vendor_order_list_admin_processing' %}"
-                 class="bg-primary "><i class="bx bx-cart-alt"></i>Order Processing ({{ Vendor_Order_Processing }})</a>
-            </li>
-            <li>
-              <a href="{% url 'vendor_order_list_admin_way' %}" class="bg-info "><i class="bx bx-cart-alt"></i>On the way ({{ Vendor_Order_way }})</a>
-            </li>
-            <li>
-              <a href="{% url 'vendor_order_list_admin_completed' %}"
-                 class="bg-success "><i class="bx bx-cart-alt"></i>Order Completed ({{ Vendor_Order_Completed }})</a>
-            </li>
-          </ul>
+
+        <!-- Users -->
+        <li class="mb-2">
+            <a href="{% url 'user_list_admin' %}" class="d-flex align-items-center gap-2 text-dark">
+                <i class="bx bx-user-circle"></i> Users
+            </a>
         </li>
-      {% endif %}
-      <!-- ---------------------------------------------------------------------------------- -->
+
+        <!-- Vendors -->
+        <li class="mb-2">
+            <a href="{% url 'vendor_list_admin' %}" class="d-flex align-items-center gap-2 text-dark">
+                <i class="bx bx-user-circle"></i> Vendor
+            </a>
+        </li>
+        {% endif %}
+
+        {% if user.is_vendor %}
+        <!-- Vendor Orders DROPDOWN -->
+        <li class="mb-2">
+            <a class="d-flex justify-content-between align-items-center text-dark"
+               data-bs-toggle="collapse" href="#vendorOrdersMenu" role="button">
+                <span><i class="bx bx-cart me-2"></i> Vendor Orders</span>
+                <i class="bx bx-chevron-down"></i>
+            </a>
+
+            <ul class="collapse ms-4 mt-2" id="vendorOrdersMenu">
+                <li><a href="{% url 'vendor_order_list_admin' %}" class="d-block py-1">Received ({{ Vendor_Order_Received }})</a></li>
+                <li><a href="{% url 'vendor_order_list_admin_processing' %}" class="d-block py-1">Processing ({{ Vendor_Order_Processing }})</a></li>
+                <li><a href="{% url 'vendor_order_list_admin_way' %}" class="d-block py-1">On the Way ({{ Vendor_Order_way }})</a></li>
+                <li><a href="{% url 'vendor_order_list_admin_completed' %}" class="d-block py-1">Completed ({{ Vendor_Order_Completed }})</a></li>
+            </ul>
+        </li>
+        {% endif %}
+
+        <!-- Logout -->
+        <li class="mb-2">
+            <a href="{% url 'admin_logout' %}" class="d-flex align-items-center gap-2 text-danger">
+                <i class="bx bx-lock"></i> Logout
+            </a>
+        </li>
+
     </ul>
-    <!--end navigation-->
-  </div>
-  <!--end sidebar wrapper -->
-  <!--start header -->
-  {% include 'admin_dash/nav/header.html' %}
-  <!--end header -->
-  <!--start overlay-->
-  <div class="overlay toggle-icon"></div>
-  <!--end overlay-->
-  <!--Start Back To Top Button-->
-  <a href="javaScript:;" class="back-to-top"><i class="bx bxs-up-arrow-alt"></i></a>
-  <!--End Back To Top Button-->
 </div>

@@ -35,51 +35,51 @@ class WelcomePage(TemplateView):
 #             return redirect("customer_login")
 #         return render(request, "customer/accounts/signup.html", {"form": form})
 
-from django.core.mail import send_mail
-from django.conf import settings
-from django.contrib import messages
+# from django.core.mail import send_mail
+# from django.conf import settings
+# from django.contrib import messages
 
-class CustomerSignUpView(View):
-    def get(self, request):
-        form = CustomUserCreationForm()
-        return render(request, "customer/accounts/signup.html", {"form": form})
+# class CustomerSignUpView(View):
+#     def get(self, request):
+#         form = CustomUserCreationForm()
+#         return render(request, "customer/accounts/signup.html", {"form": form})
 
-    def post(self, request):
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            # user.is_verified = True
-            user.otp = random.randint(100000, 999999)
-            user.save()
+#     def post(self, request):
+#         form = CustomUserCreationForm(request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             # user.is_verified = True
+#             user.otp = random.randint(100000, 999999)
+#             user.save()
 
-            subject = "Welcome to Our Store!"
-            message = f"""
-            Hi {user.full_name},
+#             subject = "Welcome to Our Store!"
+#             message = f"""
+#             Hi {user.full_name},
 
-            Your account has been created successfully.
-            Thanks for joining us!
+#             Your account has been created successfully.
+#             Thanks for joining us!
 
-            To activate your account, please click the link below:
+#             To activate your account, please click the link below:
 
-            http://127.0.0.1:8000/accounts/activate/?token={user.otp}
+#             http://127.0.0.1:8000/accounts/activate/?token={user.otp}
 
 
-            Regards,
-            Khwopa Ecommerce
-            """
-            send_mail(
-                subject,
-                message,
-                settings.DEFAULT_FROM_EMAIL,
-                [user.email],
-                fail_silently=False,
-            )
-            print("----------------------------------------")
-            print("Email Sent")
-            print("----------------------------------------")
-            return redirect("customer_login")
+#             Regards,
+#             Khwopa Ecommerce
+#             """
+#             send_mail(
+#                 subject,
+#                 message,
+#                 settings.DEFAULT_FROM_EMAIL,
+#                 [user.email],
+#                 fail_silently=False,
+#             )
+#             print("----------------------------------------")
+#             print("Email Sent")
+#             print("----------------------------------------")
+#             return redirect("customer_login")
 
-        return render(request, "customer/accounts/signup.html", {"form": form})
+#         return render(request, "customer/accounts/signup.html", {"form": form})
 
 
 
@@ -175,3 +175,36 @@ class CustomerSignUpView(View):
             return redirect("customer_login")
 
         return render(request, "customer/accounts/signup.html", {"form": form})
+
+
+
+from django.shortcuts import redirect
+from django.views import View
+from django.contrib import messages
+from .models import CustomUser
+
+class ActivateAccountView(View):
+    def get(self, request):
+        token = request.GET.get("token")
+
+        if not token:
+            messages.error(request, "Invalid activation link.")
+            return redirect("customer_login")
+
+        try:
+            user = CustomUser.objects.get(otp=token)
+        except CustomUser.DoesNotExist:
+            messages.error(request, "Invalid or expired activation token.")
+            return redirect("customer_login")
+
+        if user.is_verified:
+            messages.info(request, "Your account is already activated. Please login.")
+            return redirect("customer_login")
+
+        # Activate the user
+        user.is_verified = True
+        user.otp = ""  # clear OTP after use
+        user.save()
+
+        messages.success(request, "Your account has been activated successfully! You can now login.")
+        return redirect("customer_login")

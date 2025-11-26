@@ -13,7 +13,19 @@ from django.views import View
 from accounts import models
 from django.contrib.auth import get_user_model
 
-from products.models import ORDER_STATUS, Brand, CartProduct, Category, Color, Order, Product, ProductImage, Review, Size, Tag
+from products.models import (
+    ORDER_STATUS,
+    Brand,
+    CartProduct,
+    Category,
+    Color,
+    Order,
+    Product,
+    ProductImage,
+    Review,
+    Size,
+    Tag,
+)
 from products.products_admin.forms import ProductForm
 
 User = get_user_model()
@@ -92,6 +104,14 @@ class DashboardView(AdminOrMerchantRequiredMixin, TemplateView):
             context["recent_reviews"] = []
             context["orders"] = []
             context["new_orders"] = []
+
+        best_sellers = (
+            Product.objects.prefetch_related("product_images")
+            .annotate(average_rating=Avg("review__rating"))
+            .order_by("-average_rating")[:9]
+        )
+
+        context["best_sellers"] = best_sellers
 
         return context
 
@@ -596,11 +616,38 @@ class TagAdminDeleteView(AdminOrMerchantRequiredMixin, DeleteView):
     pk_url_kwarg = "id"
 
 
+# order
+
+class AdminOrderFilteredView(AdminOrMerchantRequiredMixin, ListView):
+    model = Order
+    template_name = "admin_dash/orders/order_list/order.html"
+    paginate_by = 50
+    context_object_name = "orders"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Filtered Orders Data"
+        context["search_query"] = self.request.GET.get("search", "")
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset().select_related("user")
+        search = self.request.GET.get("search", "").strip()
+
+        if search:
+            queryset = queryset.filter(
+                Q(order_number__icontains=search) |
+                Q(email__icontains=search) |
+                Q(mobile__icontains=search)
+            )
+
+        if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
+            queryset = queryset.filter(vendor=self.request.user.vendor)
+
+        return queryset.order_by("-id")
 
 
 
-
-# order 
 class AdminOrderReceivedView(AdminOrMerchantRequiredMixin, ListView):
     model = Order
     template_name = "admin_dash/orders/order_list/order.html"
@@ -614,10 +661,16 @@ class AdminOrderReceivedView(AdminOrMerchantRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.select_related("user").filter(order_status="Order Received").order_by("-id")
+        queryset = (
+            queryset.select_related("user")
+            .filter(order_status="Order Received")
+            .order_by("-id")
+        )
         if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
             queryset = queryset.filter(vendor=self.request.user.vendor)
         return queryset
+
+
 class AdminOrderProcessingView(AdminOrMerchantRequiredMixin, ListView):
     model = Order
     template_name = "admin_dash/orders/order_list/order.html"
@@ -631,10 +684,16 @@ class AdminOrderProcessingView(AdminOrMerchantRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.select_related("user").filter(order_status="Order Processing").order_by("-id")
+        queryset = (
+            queryset.select_related("user")
+            .filter(order_status="Order Processing")
+            .order_by("-id")
+        )
         if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
             queryset = queryset.filter(vendor=self.request.user.vendor.id)
         return queryset
+
+
 class AdminOrderOnTheWayView(AdminOrMerchantRequiredMixin, ListView):
     model = Order
     template_name = "admin_dash/orders/order_list/order.html"
@@ -648,10 +707,16 @@ class AdminOrderOnTheWayView(AdminOrMerchantRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.select_related("user").filter(order_status="On the way").order_by("-id")
+        queryset = (
+            queryset.select_related("user")
+            .filter(order_status="On the way")
+            .order_by("-id")
+        )
         if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
             queryset = queryset.filter(vendor=self.request.user.vendor)
         return queryset
+
+
 class AdminOrderCompletedView(AdminOrMerchantRequiredMixin, ListView):
     model = Order
     template_name = "admin_dash/orders/order_list/order.html"
@@ -665,10 +730,16 @@ class AdminOrderCompletedView(AdminOrMerchantRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.select_related("user").filter(order_status="Order Completed").order_by("-id")
+        queryset = (
+            queryset.select_related("user")
+            .filter(order_status="Order Completed")
+            .order_by("-id")
+        )
         if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
             queryset = queryset.filter(vendor=self.request.user.vendor)
         return queryset
+
+
 class AdminOrderCanceledView(AdminOrMerchantRequiredMixin, ListView):
     model = Order
     template_name = "admin_dash/orders/order_list/order.html"
@@ -682,10 +753,15 @@ class AdminOrderCanceledView(AdminOrMerchantRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.select_related("user").filter(order_status="Order Canceled").order_by("-id")
+        queryset = (
+            queryset.select_related("user")
+            .filter(order_status="Order Canceled")
+            .order_by("-id")
+        )
         if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
             queryset = queryset.filter(vendor=self.request.user.vendor)
         return queryset
+
 
 class AdminOrderDetailView(DetailView):
     model = Order
@@ -696,26 +772,20 @@ class AdminOrderDetailView(DetailView):
     slug_url_kwarg = "order_number"
 
     def get_queryset(self):
-        cart_items_qs = (
-            CartProduct.objects
-            .select_related(
-                "product",
-                "product__brand",
-                "product__color",
-            )
-            .prefetch_related(
-                "product__sizes",
-                Prefetch(
-                    "product__product_images",
-                    queryset=ProductImage.objects.order_by("id"),
-                    to_attr="_images",  # in-memory list
-                )
-            )
+        cart_items_qs = CartProduct.objects.select_related(
+            "product",
+            "product__brand",
+            "product__color",
+        ).prefetch_related(
+            "product__sizes",
+            Prefetch(
+                "product__product_images",
+                queryset=ProductImage.objects.order_by("id"),
+                to_attr="_images",  # in-memory list
+            ),
         )
-        return (
-            Order.objects
-            .select_related("user")
-            .prefetch_related(Prefetch("cart_products", queryset=cart_items_qs))
+        return Order.objects.select_related("user").prefetch_related(
+            Prefetch("cart_products", queryset=cart_items_qs)
         )
 
     def get_context_data(self, **kwargs):
@@ -724,11 +794,10 @@ class AdminOrderDetailView(DetailView):
         return ctx
 
 
-
-
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
+
 
 @require_POST
 def admin_change_order_status(request, pk: int):
@@ -740,7 +809,9 @@ def admin_change_order_status(request, pk: int):
         if new_status != order.order_status:
             order.order_status = new_status
             order.save(update_fields=["order_status"])
-            messages.success(request, f"Order status updated to {valid_choices[new_status]}.")
+            messages.success(
+                request, f"Order status updated to {valid_choices[new_status]}."
+            )
         else:
             messages.info(request, "Order status is unchanged.")
     else:
@@ -748,6 +819,3 @@ def admin_change_order_status(request, pk: int):
 
     # go back to details page (or referrer if you prefer)
     return redirect("admin_order_details", order_number=order.order_number)
-
-
-
