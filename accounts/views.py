@@ -139,7 +139,7 @@ class CustomerSignUpView(View):
         if form.is_valid():
             user = form.save(commit=False)
             user.is_verified = False  # initially unverified
-            user.otp = str(uuid.uuid4())  # generate unique activation token
+            user.otp = random.randint(100000, 999999)
             user.save()
 
             # Build activation link
@@ -208,3 +208,50 @@ class ActivateAccountView(View):
 
         messages.success(request, "Your account has been activated successfully! You can now login.")
         return redirect("customer_login")
+
+
+
+# users/views.py
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.views.generic import UpdateView, FormView
+from django.contrib.auth import get_user_model, update_session_auth_hash
+
+from .forms import UserUpdateForm, ChangePasswordForm
+
+User = get_user_model()
+
+
+class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UserUpdateForm
+    template_name = "customer/user/update_profile.html"
+    success_url = reverse_lazy("profile_update")  # must match urls.py
+
+    def get_object(self, queryset=None):
+        return self.request.user
+    
+    def form_valid(self, form):
+        messages.success(self.request, "Profile updated successfully.")
+        return super().form_valid(form)
+
+
+class UserChangePasswordView(LoginRequiredMixin, FormView):
+    template_name = "customer/user/change_password.html"
+    form_class = ChangePasswordForm
+    success_url = reverse_lazy("login")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        user = self.request.user
+        user.set_password(form.cleaned_data["new_password"])
+        user.save()
+
+        update_session_auth_hash(self.request, user)
+
+        return super().form_valid(form)
