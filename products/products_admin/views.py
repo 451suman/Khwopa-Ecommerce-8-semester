@@ -618,6 +618,7 @@ class TagAdminDeleteView(AdminOrMerchantRequiredMixin, DeleteView):
 
 # order
 
+
 class AdminOrderFilteredView(AdminOrMerchantRequiredMixin, ListView):
     model = Order
     template_name = "admin_dash/orders/order_list/order.html"
@@ -636,16 +637,15 @@ class AdminOrderFilteredView(AdminOrMerchantRequiredMixin, ListView):
 
         if search:
             queryset = queryset.filter(
-                Q(order_number__icontains=search) |
-                Q(email__icontains=search) |
-                Q(mobile__icontains=search)
+                Q(order_number__icontains=search)
+                | Q(email__icontains=search)
+                | Q(mobile__icontains=search)
             )
 
         if self.request.user.is_vendor and hasattr(self.request.user, "vendor"):
             queryset = queryset.filter(vendor=self.request.user.vendor)
 
         return queryset.order_by("-id")
-
 
 
 class AdminOrderReceivedView(AdminOrMerchantRequiredMixin, ListView):
@@ -799,23 +799,92 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 
 
+# @require_POST
+# def admin_change_order_status(request, pk: int):
+#     order = get_object_or_404(Order, pk=pk)
+#     new_status = request.POST.get("order_status", "").strip()
+
+#     valid_choices = dict(ORDER_STATUS)  # e.g. [('PENDING','Pending'), ...]
+#     if new_status in valid_choices:
+#         if new_status != order.order_status:
+#             order.order_status = new_status
+#             order.save(update_fields=["order_status"])
+
+#             messages.success(
+#                 request, f"Order status updated to {valid_choices[new_status]}."
+#             )
+#         else:
+#             messages.info(request, "Order status is unchanged.")
+#     else:
+#         messages.error(request, "Invalid status selection.")
+
+#     # go back to details page (or referrer if you prefer)
+#     return redirect("admin_order_details", order_number=order.order_number)
+
+from django.core.mail import send_mail
+from django.conf import settings
+from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.http import require_POST
+from django.contrib import messages
+
 @require_POST
 def admin_change_order_status(request, pk: int):
     order = get_object_or_404(Order, pk=pk)
     new_status = request.POST.get("order_status", "").strip()
-
     valid_choices = dict(ORDER_STATUS)  # e.g. [('PENDING','Pending'), ...]
+
     if new_status in valid_choices:
         if new_status != order.order_status:
             order.order_status = new_status
             order.save(update_fields=["order_status"])
+
             messages.success(
                 request, f"Order status updated to {valid_choices[new_status]}."
             )
+
+            # Send email to the user if email exists
+            if order.email:
+                # Default subject and message
+                subject = f"Your order {order.order_number} status has changed"
+                message = (
+                    f"Hello {order.ordered_by},\n\n"
+                    f"Your order {order.order_number} has been updated to "
+                    f"'{valid_choices[new_status]}'.\n\n"
+                    "Thank you for shopping with us!"
+                )
+
+                # Customize for specific statuses
+                if order.order_status == "Order Canceled":
+                    subject = f"Your order {order.order_number} has been canceled"
+                    message = (
+                        f"Hello {order.ordered_by},\n\n"
+                        f"Your order {order.order_number} has been canceled.\n\n"
+                        "If you have any questions, please contact our support team."
+                    )
+                elif order.order_status == "Order Completed":
+                    subject = f"Your order {order.order_number} is completed – Share your review!"
+                    message = (
+                        f"Hello {order.ordered_by},\n\n"
+                        f"Your order {order.order_number} has been completed successfully!\n\n"
+                        "We would love to hear your feedback. Please review the products you purchased:\n"
+                    )
+                    # List products in the order
+                    for cart_product in order.cart_products.all():
+                        message += f"- {cart_product.product.name}\n"
+                    message += "\nSubmit your review here: http://127.0.0.1:8000/products/order/"+str(order.id)+"\n\n" 
+                    message += "Thank you for shopping with us!"
+
+                # Send the email
+                send_mail(
+                    subject,
+                    message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [order.email],
+                    fail_silently=False,
+                )
         else:
             messages.info(request, "Order status is unchanged.")
     else:
         messages.error(request, "Invalid status selection.")
 
-    # go back to details page (or referrer if you prefer)
     return redirect("admin_order_details", order_number=order.order_number)

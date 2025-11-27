@@ -14,6 +14,7 @@ from django.contrib.auth import login
 from django.urls import reverse_lazy
 from .forms import CustomerLoginForm
 
+
 class WelcomePage(TemplateView):
     template_name = "customer/welcome_page/welcomepage.html"
 
@@ -82,7 +83,6 @@ class WelcomePage(TemplateView):
 #         return render(request, "customer/accounts/signup.html", {"form": form})
 
 
-
 class CustomerLoginView(FormView):
     template_name = "customer/accounts/login.html"
     form_class = CustomerLoginForm
@@ -119,7 +119,6 @@ class CustomerLogoutView(View):
         return redirect("home")
 
 
-
 import uuid
 from django.core.mail import send_mail
 from django.conf import settings
@@ -128,6 +127,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from .forms import CustomUserCreationForm
 from .models import CustomUser
+
 
 class CustomerSignUpView(View):
     def get(self, request):
@@ -171,17 +171,20 @@ class CustomerSignUpView(View):
                 fail_silently=False,
             )
 
-            messages.success(request, "Signup successful! Please check your email to activate your account.")
+            messages.success(
+                request,
+                "Signup successful! Please check your email to activate your account.",
+            )
             return redirect("customer_login")
 
         return render(request, "customer/accounts/signup.html", {"form": form})
-
 
 
 from django.shortcuts import redirect
 from django.views import View
 from django.contrib import messages
 from .models import CustomUser
+
 
 class ActivateAccountView(View):
     def get(self, request):
@@ -205,10 +208,19 @@ class ActivateAccountView(View):
         user.is_verified = True
         user.otp = ""  # clear OTP after use
         user.save()
-
-        messages.success(request, "Your account has been activated successfully! You can now login.")
+        subject = f" Account activated."
+        message = f"HEllo {user.full_name},Your Account hac been successfull activated."
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,  # make sure you set this in settings.py
+            [user.email],
+            fail_silently=False,  # Set True if you don't want exceptions
+        )
+        messages.success(
+            request, "Your account has been activated successfully! You can now login."
+        )
         return redirect("customer_login")
-
 
 
 # users/views.py
@@ -231,7 +243,7 @@ class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         return self.request.user
-    
+
     def form_valid(self, form):
         messages.success(self.request, "Profile updated successfully.")
         return super().form_valid(form)

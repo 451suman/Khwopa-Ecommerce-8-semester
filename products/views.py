@@ -48,28 +48,31 @@ class HomeView(ListView):
         # cache.set("new_products", new_products, 60)
         return new_products
 
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Cache categories with annotated product ratings
-        # categories = cache.get("categories")
-        # if not categories:
+        # Annotate products with average rating
         product_qs = Product.objects.prefetch_related("product_images").annotate(
             average_rating=Avg("review__rating")
         )
+
+        # Top 5 rated products
+        # Top 5 rated products with reviews
+        top_rated = product_qs.filter(average_rating__isnull=False).order_by("-average_rating")[:5]
+
+
+        # Categories
         categories = (
             Category.objects.prefetch_related(Prefetch("products", queryset=product_qs))
             .filter(arranged__isnull=False)
             .order_by("arranged")
         )
-        # cache.set("categories", categories, 60)
 
         context["categories"] = categories
-
-
-
-
+        context["top_rated"] = top_rated  # <-- add this
         return context
+
 
 
 # Query 1: Get latest 5 Product objects
