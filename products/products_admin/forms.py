@@ -63,9 +63,9 @@ class AdminCategoryForm(forms.ModelForm):
                 # Hide vendor field and set it in the view
                 self.fields["vendor"].widget = forms.HiddenInput()
                 self.fields["vendor"].required = False
-                self.fields["arranged"].widget = forms.HiddenInput()  # ✅ Corrected
+                self.fields["arranged"].widget = forms.HiddenInput()  #  Corrected
                 self.fields["arranged"].required = (
-                    False  # ✅ Optional if you want to make it optional
+                    False  #  Optional if you want to make it optional
                 )
 
             elif self.user.is_superuser or self.user.is_staff:
