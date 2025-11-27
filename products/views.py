@@ -127,7 +127,10 @@ class ProductListView(ListView):
             for i in range(len(products) - 1):
                 for j in range(len(products) - 1 - i):
                     if products[j].current_price > products[j + 1].current_price:
-                        products[j], products[j + 1] = products[j + 1], products[j]
+                        # products[j], products[j + 1] = products[j + 1], products[j]
+                        temp = products[j]            # Store current product temporarily
+                        products[j] = products[j + 1] # Move the next product to current position
+                        products[j + 1] = temp        # Move the stored product to the next position
             qs = products
 
         elif sort == "high_to_low":
@@ -136,7 +139,10 @@ class ProductListView(ListView):
             for i in range(len(products) - 1):
                 for j in range(len(products) - 1 - i):
                     if products[j].current_price < products[j + 1].current_price:
-                        products[j], products[j + 1] = products[j + 1], products[j]
+                        # products[j], products[j + 1] = products[j + 1], products[j]
+                        temp = products[j]            # Store current product temporarily
+                        products[j] = products[j + 1] # Move the next product to current position
+                        products[j + 1] = temp        # Move the stored product to the next position
             qs = products
 
         # Default sorting by 'created_at' in descending order
